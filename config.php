@@ -7,25 +7,28 @@ define('DB_USER', 'root');
 define('DB_PASS', '');
 define('DB_NAME', 'laras_db');
 
-// === AUTO-DETECT BASE_URL (FLEKSIBEL: LOCAL / SUBDOMAIN / SUBFOLDER HTTPS) ===
-// Cara pakai: UBAH MANUAL HANYA JIKA rewrite / subdomain tidak terdeteksi benar.
+// === BASE_URL OTOMATIS (100% WORK LOCAL / HOSTING) ===
+// DIHITUNG BERDASARKAN FOLDER LOKASI config.php (ROOT APLIKASI),
+// BUKAN berdasarkan file yang sedang dibuka (ini penyebab /master/master/ 404).
+if (!isset($_SERVER['HTTP_HOST'])) { $_SERVER['HTTP_HOST'] = 'localhost'; }
 $proto = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
-if (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https') $proto = 'https';
-$host  = $_SERVER['HTTP_HOST'] ?? 'localhost';
-$uri   = rtrim(dirname($_SERVER['SCRIPT_NAME'] ?? ''), '/\\');
-$base  = $proto . '://' . $host . $uri . '/';
-// Normalisasi: hapus trailing slash /index.php /\ / berulang
-$base = preg_replace('#/+#', '/', str_replace('\\', '/', $base));
-$base = preg_replace('#:/#', '://', $base);
+if (!empty($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https') $proto = 'https';
+$host = $_SERVER['HTTP_HOST'];
+
+// Hitung path ROOT APLIKASI (tempat config.php ini berada) relatif ke DOCUMENT_ROOT
+$appRootAbs = str_replace('\\', '/', __DIR__);
+$docRootAbs  = str_replace('\\', '/', $_SERVER['DOCUMENT_ROOT'] ?? '');
+$appPath     = rtrim(str_replace($docRootAbs, '', $appRootAbs), '/');
+$base        = $proto . '://' . $host . $appPath . '/';
+
+// Normalisasi (hindari // double slash, pastikan format rapi)
+$base = preg_replace('#(?<!:)//#', '/', $base);
 if (!defined('BASE_URL')) define('BASE_URL', $base);
 
-// ==== JIKA MAU MANUAL (MATIKAN AUTO di atas, pilih salah satu): ====
-// 1. KALO ROOT SUBDOMAIN (contoh: https://laras.bpkp-diy.go.id/)
-//    define('BASE_URL', 'https://laras.bpkp-diy.go.id/');
-// 2. KALO SUBFOLDER DOMAIN UTAMA (contoh: https://bpkp-diy.go.id/laras/)
-//    define('BASE_URL', 'https://bpkp-diy.go.id/laras/');
-// 3. KALO LOCAL LARAGON (default sebelumnya):
-//    define('BASE_URL', 'http://localhost/AGUSTUS/peminjaman%20mobil/');
+// ==== JIKA OTOMATIS MASIH SALAH, PAKAI MANUAL (hapus // di DEPAN define): ====
+// define('BASE_URL', 'https://izsaahost.my.id/laras/');       // ✅ HOSTING KAMU (subfolder /laras)
+// define('BASE_URL', 'http://localhost/AGUSTUS/peminjaman%20mobil/'); // LOCAL LARAGON
+// define('BASE_URL', 'https://laras.bpkp-diy.go.id/');         // SUBDOMAIN MASA DEPAN
 define('APP_NAME', 'LARAS');
 define('APP_DESC', 'Layanan Aplikasi Reservasi Aset & Sarana');
 define('APP_INSTANSI', 'BPKP Perwakilan D.I. Yogyakarta');
@@ -33,7 +36,13 @@ define('APP_INSTANSI_SHORT', 'BPKP DIY');
 define('APP_BAGIAN', 'Bagian Umum');
 
 function base_url($path = '') {
-    return BASE_URL . ltrim($path, '/');
+    $b = rtrim(BASE_URL, '/') . '/';
+    $p = ltrim((string)$path, '/');
+    $full = $b . $p;
+    $full = preg_replace('#(?<!:)(/)/+#', '$1', $full);
+    // Anti patologi: /foo/foo/... → /foo/ (misal /master/master/ → /master/)
+    $full = preg_replace('#(/[^/]+/)\1+#', '$1', $full);
+    return $full;
 }
 
 function redirect($url) {
