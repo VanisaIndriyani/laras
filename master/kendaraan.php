@@ -409,7 +409,7 @@ body.modal-open .sidebar, body.modal-open .topbar { padding-right: 0 !important;
                                     title="Edit data termasuk pajak, BMN, unit, service">
                                     <i class="bi bi-pencil me-1"></i>Edit
                                 </button>
-                                <form method="POST" onsubmit="return bsConfirm('Hapus kendaraan <?= sanitize($k['no_plat']) ?>? Data reservasi terkait tidak ikut terhapus.')" style="display:inline">
+                                <form method="POST" action="<?= base_url('master/kendaraan.php') ?>" onsubmit="return bsConfirm('Hapus kendaraan <?= sanitize($k['no_plat']) ?>? Data reservasi terkait tidak ikut terhapus.')" style="display:inline">
                                     <input type="hidden" name="act" value="hapus"><input type="hidden" name="id" value="<?= $k['id'] ?>">
                                     <button class="btn btn-sm fw-bold" style="background:rgba(239,68,68,0.08);color:#dc2626;border:none;border-radius:9px;padding:6px 10px;font-size:10px" title="Hapus">
                                         <i class="bi bi-trash"></i>
@@ -579,7 +579,7 @@ function renderCustomForm($prefix, $basicFields, $bmnFields, $pajakFields, $serv
         </div>
         <button class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
     </div>
-    <form method="POST"><input type="hidden" name="act" value="tambah">
+    <form method="POST" action="<?= base_url('master/kendaraan.php') ?>"><input type="hidden" name="act" value="tambah">
         <?php renderCustomForm('t', $basicFields, $bmnFields, $pajakFields, $serviceFields, $statusOps, 'Simpan Data Kendaraan', $drivers_list); ?>
     </form>
 </div></div></div>
@@ -597,7 +597,7 @@ function renderCustomForm($prefix, $basicFields, $bmnFields, $pajakFields, $serv
         </div>
         <button class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
     </div>
-    <form method="POST"><input type="hidden" name="act" value="edit"><input type="hidden" name="id" id="e_id" value="0">
+    <form method="POST" action="<?= base_url('master/kendaraan.php') ?>"><input type="hidden" name="act" value="edit"><input type="hidden" name="id" id="e_id" value="0">
         <?php renderCustomForm('e', $basicFields, $bmnFields, $pajakFields, $serviceFields, $statusOps, 'Perbarui Data Kendaraan', $drivers_list); ?>
     </form>
 </div></div></div>

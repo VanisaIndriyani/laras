@@ -364,7 +364,7 @@ body.modal-open .sidebar, body.modal-open .topbar { padding-right: 0 !important;
         </div>
         <div style="position:relative;max-width:290px;flex:1 1 180px;min-width:180px">
             <i class="bi bi-search" style="position:absolute;top:50%;left:11px;transform:translateY(-50%);color:#94a3b8;font-size:12px"></i>
-            <form method="GET" id="formSearch" style="margin:0">
+            <form method="GET" id="formSearch" action="<?= base_url('master/driver.php') ?>" style="margin:0">
                 <?php foreach ($_GET as $k=>$v) if ($k !== 'search'): ?>
                 <input type="hidden" name="<?= $k ?>" value="<?= htmlspecialchars($v) ?>">
                 <?php endif; ?>
@@ -446,7 +446,7 @@ body.modal-open .sidebar, body.modal-open .topbar { padding-right: 0 !important;
                                     style="background:rgba(31,58,139,0.08);color:#1F3A8B;border:none;border-radius:9px;padding:5.5px 10px;font-size:9.5px" title="Edit">
                                     <i class="bi bi-pencil"></i>
                                 </button>
-                                <form method="POST" onsubmit="return bsConfirm('Hapus driver <?= sanitize($d['nama_driver']) ?>?')" style="display:inline">
+                                <form method="POST" action="<?= base_url('master/driver.php') ?>" onsubmit="return bsConfirm('Hapus driver <?= sanitize($d['nama_driver']) ?>?')" style="display:inline">
                                     <input type="hidden" name="act" value="hapus"><input type="hidden" name="id" value="<?= $d['id'] ?>">
                                     <button class="btn btn-sm fw-bold" style="background:rgba(239,68,68,0.08);color:#dc2626;border:none;border-radius:9px;padding:5.5px 10px;font-size:9.5px" title="Hapus">
                                         <i class="bi bi-trash"></i>
@@ -500,7 +500,7 @@ function fl_input_d($prefix, $name, $label, $type, $ph='', $icon='', $value='') 
         </div>
         <button class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
     </div>
-    <form method="POST"><input type="hidden" name="act" value="tambah">
+    <form method="POST" action="<?= base_url('master/driver.php') ?>"><input type="hidden" name="act" value="tambah">
         <div class="modal-body" style="padding:16px 20px 4px;background:linear-gradient(180deg,#fafcff 0%,#ffffff 100%)">
             <div class="section-card">
                 <div class="section-card-title"><span class="section-dot section-dot-green"></span>Data Identitas Driver</div>
@@ -544,7 +544,7 @@ function fl_input_d($prefix, $name, $label, $type, $ph='', $icon='', $value='') 
         </div>
         <button class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
     </div>
-    <form method="POST"><input type="hidden" name="act" value="edit"><input type="hidden" name="id" id="e_id">
+    <form method="POST" action="<?= base_url('master/driver.php') ?>"><input type="hidden" name="act" value="edit"><input type="hidden" name="id" id="e_id">
         <div class="modal-body" style="padding:16px 20px 4px;background:linear-gradient(180deg,#fafcff 0%,#ffffff 100%)">
             <div class="section-card">
                 <div class="section-card-title"><span class="section-dot section-dot-amber"></span>Perbarui Data Driver</div>

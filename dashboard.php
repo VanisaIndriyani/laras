@@ -473,7 +473,7 @@ $recent_ruang = db()->fetchAll("SELECT rr.*, r.nama_ruangan, r.lantai, u.nama_le
         <div class="card h-100">
             <div class="card-header">
                 <h6 class="card-title"><i class="bi bi-car-front-fill me-2" style="color:#2563eb"></i>Reservasi Kendaraan Terbaru</h6>
-                <a href="<?= base_url('kendaraan/') ?>" class="btn btn-sm btn-secondary">Lihat Semua <i class="bi bi-arrow-right ms-1"></i></a>
+                <a href="<?= base_url('kendaraan/index.php') ?>" class="btn btn-sm btn-secondary">Lihat Semua <i class="bi bi-arrow-right ms-1"></i></a>
             </div>
             <div class="card-body p-0">
                 <?php if (empty($recent_mobil)): ?>
@@ -518,7 +518,7 @@ $recent_ruang = db()->fetchAll("SELECT rr.*, r.nama_ruangan, r.lantai, u.nama_le
         <div class="card h-100">
             <div class="card-header">
                 <h6 class="card-title"><i class="bi bi-door-open-fill me-2" style="color:#7c3aed"></i>Reservasi Ruangan Terbaru</h6>
-                <a href="<?= base_url('ruangan/') ?>" class="btn btn-sm btn-secondary">Lihat Semua <i class="bi bi-arrow-right ms-1"></i></a>
+                <a href="<?= base_url('ruangan/index.php') ?>" class="btn btn-sm btn-secondary">Lihat Semua <i class="bi bi-arrow-right ms-1"></i></a>
             </div>
             <div class="card-body p-0">
                 <?php if (empty($recent_ruang)): ?>

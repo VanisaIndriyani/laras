@@ -117,11 +117,11 @@ if ($editId > 0) {
     $data = db()->fetchOne("SELECT * FROM reservasi_kendaraan WHERE id = ?", [$editId]);
     if (!$data || (!$isAdmin && $data['user_id'] != $user['id'])) {
         set_flash('error', 'Reservasi tidak ditemukan atau tidak sah.');
-        redirect(base_url('kendaraan/'));
+        redirect(base_url('kendaraan/index.php'));
     }
     if (!in_array($data['status'], ['pending', 'ditolak'])) {
         set_flash('error', 'Reservasi sudah tidak dapat diubah.');
-        redirect(base_url('kendaraan/'));
+        redirect(base_url('kendaraan/index.php'));
     }
 }
 
@@ -137,14 +137,14 @@ try {
         <h4><i class="bi bi-car-front-fill me-2" style="color:#2563eb"></i><?= $editId ? 'Edit Reservasi Kendaraan' : 'Ajukan Reservasi Kendaraan Baru' ?></h4>
         <nav class="breadcrumb">
             <a class="breadcrumb-item" href="<?= base_url('dashboard.php') ?>">Home</a>
-            <a class="breadcrumb-item" href="<?= base_url('kendaraan/') ?>">Reservasi Kendaraan</a>
+            <a class="breadcrumb-item" href="<?= base_url('kendaraan/index.php') ?>">Reservasi Kendaraan</a>
             <span class="breadcrumb-item active"><?= $editId ? 'Edit' : 'Baru' ?></span>
         </nav>
     </div>
-    <a href="<?= base_url('kendaraan/') ?>" class="btn btn-secondary"><i class="bi bi-arrow-left"></i> Kembali</a>
+    <a href="<?= base_url('kendaraan/index.php') ?>" class="btn btn-secondary"><i class="bi bi-arrow-left"></i> Kembali</a>
 </div>
 
-<form action="action.php" method="POST" id="formKendaraan">
+<form action="<?= base_url('kendaraan/action.php') ?>" method="POST" id="formKendaraan">
     <input type="hidden" name="action" value="<?= $editId ? 'update' : 'create' ?>">
     <?php if ($editId): ?>
         <input type="hidden" name="id" value="<?= $editId ?>">
@@ -318,7 +318,7 @@ try {
             </div>
 
             <div class="form-actions-sticky">
-                <a href="<?= base_url('kendaraan/') ?>" class="btn btn-secondary"><i class="bi bi-x-lg"></i> Batal</a>
+                <a href="<?= base_url('kendaraan/index.php') ?>" class="btn btn-secondary"><i class="bi bi-x-lg"></i> Batal</a>
                 <button type="submit" class="btn btn-primary"><i class="bi bi-send-fill"></i> <?= $editId ? 'Update Pengajuan' : 'Kirim Pengajuan Reservasi' ?></button>
             </div>
         </div>

@@ -121,7 +121,7 @@ $nilaiStatus = function($arr, $st) {
         <h6 class="card-title"><i class="bi bi-funnel-fill me-2" style="color:#f59e0b"></i>Filter Laporan</h6>
     </div>
     <div class="card-body">
-        <form method="GET" class="row g-3 align-items-end">
+        <form method="GET" action="<?= base_url('laporan.php') ?>" class="row g-3 align-items-end">
             <div class="col-md-3">
                 <label class="form-label">Tipe Reservasi</label>
                 <select class="form-select" name="tipe">

@@ -15,11 +15,11 @@ if ($editId > 0) {
     $data = db()->fetchOne("SELECT * FROM reservasi_ruangan WHERE id = ?", [$editId]);
     if (!$data || (!$isAdmin && $data['user_id'] != $user['id'])) {
         set_flash('error', 'Reservasi tidak ditemukan atau tidak sah.');
-        redirect(base_url('ruangan/'));
+        redirect(base_url('ruangan/index.php'));
     }
     if (!in_array($data['status'], ['pending', 'ditolak'])) {
         set_flash('error', 'Reservasi sudah tidak dapat diubah.');
-        redirect(base_url('ruangan/'));
+        redirect(base_url('ruangan/index.php'));
     }
 } elseif ($preselected_ruangan > 0) {
     $cek_ruang = db()->fetchOne("SELECT id, nama_ruangan FROM ruangan WHERE id = ? AND status = 'tersedia'", [$preselected_ruangan]);
@@ -63,11 +63,11 @@ if ($editId > 0 && $data) {
         <h4><i class="bi bi-door-open-fill me-2" style="color:#2563eb"></i><?= $editId ? 'Edit Reservasi Ruangan' : 'Ajukan Reservasi Ruangan Rapat' ?></h4>
         <nav class="breadcrumb mb-0">
             <a class="breadcrumb-item" href="<?= base_url('dashboard.php') ?>">Home</a>
-            <a class="breadcrumb-item" href="<?= base_url('ruangan/') ?>">Reservasi Ruangan</a>
+            <a class="breadcrumb-item" href="<?= base_url('ruangan/index.php') ?>">Reservasi Ruangan</a>
             <span class="breadcrumb-item active"><?= $editId ? 'Edit' : 'Baru' ?></span>
         </nav>
     </div>
-    <a href="<?= base_url('ruangan/') ?>" class="btn btn-light fw-semibold border" style="border-radius:11px;padding:8px 18px;font-size:11.5px;border-color:#dbe5f1;color:#475569">
+    <a href="<?= base_url('ruangan/index.php') ?>" class="btn btn-light fw-semibold border" style="border-radius:11px;padding:8px 18px;font-size:11.5px;border-color:#dbe5f1;color:#475569">
         <i class="bi bi-arrow-left me-1.5"></i> Kembali ke Daftar
     </a>
 </div>
@@ -88,7 +88,7 @@ if ($editId > 0 && $data) {
     </div>
 </div>
 
-<form action="action.php" method="POST" id="formRuangan" style="padding-bottom:88px">
+<form action="<?= base_url('ruangan/action.php') ?>" method="POST" id="formRuangan" style="padding-bottom:88px">
     <input type="hidden" name="action" value="<?= $editId ? 'update' : 'create' ?>">
     <?php if ($editId): ?>
         <input type="hidden" name="id" value="<?= $editId ?>">
@@ -325,7 +325,7 @@ if ($editId > 0 && $data) {
     </div>
 
     <div class="form-actions-sticky">
-        <a href="<?= base_url('ruangan/') ?>" class="btn btn-light fw-semibold border" style="border-radius:12px;padding:10px 22px;font-size:12px;border-color:#dbe5f1;color:#475569">
+        <a href="<?= base_url('ruangan/index.php') ?>" class="btn btn-light fw-semibold border" style="border-radius:12px;padding:10px 22px;font-size:12px;border-color:#dbe5f1;color:#475569">
             <i class="bi bi-x-lg me-1.5"></i> Batal
         </a>
         <button type="submit" class="btn btn-primary fw-semibold shadow-sm" style="border-radius:12px;padding:10px 26px;font-size:12px;background:linear-gradient(135deg,#1F3A8B,#3B5FC7);border:none">

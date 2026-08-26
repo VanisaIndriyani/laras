@@ -278,7 +278,7 @@ function detect_status_operasional($r) {
     <!-- ================== TAB 1 & TAB 4 : DAFTAR RESERVASI + RIWAYAT (CARD STYLE) ================== -->
     <div class="card border-0 shadow-sm mb-4 ken-filter-card position-relative" style="border-radius:18px;overflow:hidden;border:1.5px solid #e2e8f0;box-shadow:0 10px 34px -16px rgba(11,28,72,0.15)">
         <div class="card-body py-4 px-5" style="background:linear-gradient(180deg,#fafcff,#ffffff);border-bottom:1px solid #eef2f7">
-            <form method="GET" class="d-flex flex-wrap gap-3 align-items-center">
+            <form method="GET" action="<?= base_url('kendaraan/index.php') ?>" class="d-flex flex-wrap gap-3 align-items-center">
                 <input type="hidden" name="tab" value="<?= sanitize($tab) ?>">
                 <div class="search-box flex-grow-1" style="max-width:620px;min-width:260px">
                     <i class="bi bi-search search-icon"></i>

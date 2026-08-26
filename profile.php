@@ -119,7 +119,7 @@ $dbUser = db()->fetchOne("SELECT * FROM users WHERE id = ? LIMIT 1", [$uid]);
                         <div style="font-size:10.5px;color:#64748b;margin-top:2px;font-weight:500">Gunakan kombinasi huruf, angka, dan simbol untuk keamanan maksimal</div>
                     </div>
                 </div>
-                <form method="POST" style="padding:22px" novalidate>
+                <form method="POST" action="<?= base_url('profile.php') ?>" style="padding:22px" novalidate>
                     <div style="margin-bottom:16px">
                         <label style="font-size:11.5px;font-weight:700;color:#334155;margin-bottom:6px;display:flex;align-items:center;gap:5px"><i class="bi bi-lock-fill" style="color:#2563eb;font-size:11px"></i>Password Saat Ini</label>
                         <input type="password" name="old_password" required minlength="1" class="form-control" style="border-radius:11px;border:1.5px solid #cbd5e1;padding:10.5px 13px;font-size:12.5px;font-weight:500;color:#0f172a;box-shadow:none !important;transition:all .2s ease;background:#f8fafc" placeholder="Masukkan password yang sedang Anda gunakan" onfocus="this.style.borderColor='#3B5FC7';this.style.background='#ffffff'" onblur="this.style.borderColor='#cbd5e1';this.style.background='#f8fafc'">

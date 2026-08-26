@@ -141,7 +141,7 @@ $total = count($pendingMobil) + count($pendingRuang);
 
 <div class="modal fade" id="approveModal"><div class="modal-dialog"><div class="modal-content">
     <div class="modal-header" id="apvHeader"><h5 class="modal-title"><i class="bi bi-shield-check me-2"></i>Konfirmasi Approval</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
-    <form method="POST">
+    <form method="POST" action="<?= base_url('master/approvals.php') ?>">
         <input type="hidden" name="act" value="approve">
         <input type="hidden" name="tipe" id="apv_tipe">
         <input type="hidden" name="id" id="apv_id">

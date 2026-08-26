@@ -81,7 +81,7 @@ $ruangan = db()->fetchAll("SELECT * FROM ruangan ORDER BY lantai, nama_ruangan")
                         <td>
                             <div class="d-flex gap-1">
                                 <button class="btn btn-sm btn-secondary" onclick='editR(<?= json_encode($r, JSON_NUMERIC_CHECK) ?>)'><i class="bi bi-pencil"></i></button>
-                                <form method="POST" onsubmit="return confirm('Hapus ruangan ini?')" style="display:inline">
+                                <form method="POST" action="<?= base_url('master/ruangan.php') ?>" onsubmit="return confirm('Hapus ruangan ini?')" style="display:inline">
                                     <input type="hidden" name="act" value="hapus"><input type="hidden" name="id" value="<?= $r['id'] ?>">
                                     <button class="btn btn-sm btn-danger"><i class="bi bi-trash"></i></button>
                                 </form>
@@ -106,7 +106,7 @@ $fields = [
 
 <div class="modal fade" id="tambahModal"><div class="modal-dialog"><div class="modal-content">
     <div class="modal-header"><h5 class="modal-title"><i class="bi bi-plus me-2"></i>Tambah Ruangan</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
-    <form method="POST"><input type="hidden" name="act" value="tambah">
+    <form method="POST" action="<?= base_url('master/ruangan.php') ?>"><input type="hidden" name="act" value="tambah">
         <div class="modal-body">
             <div class="row g-3">
                 <?php foreach ($fields as $f): ?>
@@ -138,7 +138,7 @@ $fields = [
 
 <div class="modal fade" id="editModal"><div class="modal-dialog"><div class="modal-content">
     <div class="modal-header"><h5 class="modal-title"><i class="bi bi-pencil me-2"></i>Edit Ruangan</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
-    <form method="POST"><input type="hidden" name="act" value="edit"><input type="hidden" name="id" id="e_id">
+    <form method="POST" action="<?= base_url('master/ruangan.php') ?>"><input type="hidden" name="act" value="edit"><input type="hidden" name="id" id="e_id">
         <div class="modal-body">
             <div class="row g-3">
                 <?php foreach ($fields as $f): $tp = str_contains($f['name'],'kapasitas')?'number':'text'; ?>

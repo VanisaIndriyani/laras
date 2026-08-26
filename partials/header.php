@@ -2791,7 +2791,7 @@ try {
             <ul class="submenu-list">
                 <?php foreach ($reservasi_children as $c): ?>
                 <li>
-                    <a href="<?= base_url($c[0] . '/') ?>" class="menu-link <?= $active_menu === $c[1] ? 'active' : '' ?>">
+                    <a href="<?= base_url($c[0] . '/index.php') ?>" class="menu-link <?= $active_menu === $c[1] ? 'active' : '' ?>">
                         <i class="bi <?= $c[3] ?>"></i>
                         <span><?= $c[2] ?></span>
                         <?php if ($c[1] === 'kendaraan' && !empty($count_mobil_pending)): ?>
@@ -2816,7 +2816,7 @@ try {
             <span>Laporan</span>
         </a>
 
-        <a href="<?= base_url('pajak/') ?>" class="menu-link <?= $active_menu === 'pajak' ? 'active' : '' ?>">
+        <a href="<?= base_url('pajak/index.php') ?>" class="menu-link <?= $active_menu === 'pajak' ? 'active' : '' ?>">
             <i class="bi bi-receipt-cutoff"></i>
             <span>Perpajakan</span>
             <?php if ($count_pajak_alert > 0): ?>

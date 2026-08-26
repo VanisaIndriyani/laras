@@ -6,7 +6,7 @@ $user = current_user();
 $isAdmin = is_admin();
 
 $action = $_POST['action'] ?? $_GET['action'] ?? '';
-$redirect_url = base_url('kendaraan/');
+$redirect_url = base_url('kendaraan/index.php');
 
 try {
     switch ($action) {

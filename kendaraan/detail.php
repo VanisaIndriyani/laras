@@ -16,7 +16,7 @@ $r = db()->fetchOne("SELECT rk.*, k.no_plat, k.merk, k.tipe, k.tahun, k.kapasita
 
 if (!$r || (!$isAdmin && $r['user_id'] != $user['id'])) {
     set_flash('error', 'Data tidak ditemukan.');
-    redirect(base_url('kendaraan/'));
+    redirect(base_url('kendaraan/index.php'));
 }
 
 // Fallback agar tidak error saat kendaraan/users data tidak lengkap
@@ -38,11 +38,11 @@ $r['hp_pemohon'] = $r['hp_pemohon'] ?? null;
         <h4><i class="bi bi-file-earmark-text me-2" style="color:#2563eb"></i>Detail Reservasi Kendaraan</h4>
         <nav class="breadcrumb">
             <a class="breadcrumb-item" href="<?= base_url('dashboard.php') ?>">Home</a>
-            <a class="breadcrumb-item" href="<?= base_url('kendaraan/') ?>">Reservasi Kendaraan</a>
+            <a class="breadcrumb-item" href="<?= base_url('kendaraan/index.php') ?>">Reservasi Kendaraan</a>
             <span class="breadcrumb-item active">Detail</span>
         </nav>
     </div>
-    <a href="<?= base_url('kendaraan/') ?>" class="btn btn-secondary"><i class="bi bi-arrow-left"></i> Kembali ke Daftar</a>
+    <a href="<?= base_url('kendaraan/index.php') ?>" class="btn btn-secondary"><i class="bi bi-arrow-left"></i> Kembali ke Daftar</a>
 </div>
 
 <div class="row g-3">
@@ -205,7 +205,7 @@ $r['hp_pemohon'] = $r['hp_pemohon'] ?? null;
             </div>
             <div class="card-body">
                 <p style="font-size:11px;color:#64748b;margin:0 0 12px">Sebagai Admin / Bagian Umum, silakan berikan keputusan terhadap pengajuan peminjaman kendaraan ini.</p>
-                <form method="POST" action="action.php">
+                <form method="POST" action="<?= base_url('kendaraan/action.php') ?>">
                     <input type="hidden" name="action" value="approve">
                     <input type="hidden" name="id" value="<?= $r['id'] ?>">
                     <label class="form-label">Catatan (Opsional)</label>
@@ -234,7 +234,7 @@ $r['hp_pemohon'] = $r['hp_pemohon'] ?? null;
                     <?php if ($isAdmin && $r['status'] === 'disetujui'): ?>
                     <a href="action.php?action=selesai&id=<?= $r['id'] ?>" class="btn btn-success w-100" onclick="return confirm('Tandai reservasi ini SELESAI?')"><i class="bi bi-flag-fill"></i> Tandai Selesai</a>
                     <?php endif; ?>
-                    <a href="<?= base_url('kendaraan/') ?>" class="btn btn-secondary w-100"><i class="bi bi-arrow-left"></i> Kembali ke Daftar</a>
+                    <a href="<?= base_url('kendaraan/index.php') ?>" class="btn btn-secondary w-100"><i class="bi bi-arrow-left"></i> Kembali ke Daftar</a>
                 </div>
             </div>
         </div>
