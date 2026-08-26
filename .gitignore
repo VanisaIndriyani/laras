@@ -1,0 +1,33 @@
+# OS
+.DS_Store
+Thumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# IDE / Editor
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Environment / Sensitif
+.env
+.env.local
+config.local.php
+
+# Laragon / temp
+*.log
+tmp/
+temp/
+cache/
+uploads/_tmp/
+
+# Dependency
+vendor/
+node_modules/
+
+# Backup
+*.bak
+*.old
+*.orig

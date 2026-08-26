@@ -1,0 +1,6 @@
+# Security: disable PHP execution
+<FilesMatch \.(php|phtml|phar|pl|py|cgi|sh|jsp|asp|aspx)$>
+    Require all denied
+</FilesMatch>
+Options -Indexes -ExecCGI
+AddType text/plain .php
