@@ -2828,6 +2828,7 @@ try {
 
         <?php
         $data_master_children = [
+            ['users', 'master-users', 'Pengguna', 'people-fill', 'bi-people-fill'],
             ['kendaraan', 'master-kendaraan', 'Kendaraan', 'truck-front-fill', 'bi-truck-front-fill'],
             ['driver', 'master-driver', 'Driver', 'person-rolodex', 'bi-person-rolodex'],
             ['ruangan', 'master-ruangan', 'Ruangan', 'building-fill', 'bi-building-fill'],
