@@ -6,7 +6,26 @@ define('DB_HOST', 'localhost');
 define('DB_USER', 'root');
 define('DB_PASS', '');
 define('DB_NAME', 'laras_db');
-define('BASE_URL', 'http://localhost/AGUSTUS/peminjaman%20mobil/');
+
+// === AUTO-DETECT BASE_URL (FLEKSIBEL: LOCAL / SUBDOMAIN / SUBFOLDER HTTPS) ===
+// Cara pakai: UBAH MANUAL HANYA JIKA rewrite / subdomain tidak terdeteksi benar.
+$proto = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+if (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https') $proto = 'https';
+$host  = $_SERVER['HTTP_HOST'] ?? 'localhost';
+$uri   = rtrim(dirname($_SERVER['SCRIPT_NAME'] ?? ''), '/\\');
+$base  = $proto . '://' . $host . $uri . '/';
+// Normalisasi: hapus trailing slash /index.php /\ / berulang
+$base = preg_replace('#/+#', '/', str_replace('\\', '/', $base));
+$base = preg_replace('#:/#', '://', $base);
+if (!defined('BASE_URL')) define('BASE_URL', $base);
+
+// ==== JIKA MAU MANUAL (MATIKAN AUTO di atas, pilih salah satu): ====
+// 1. KALO ROOT SUBDOMAIN (contoh: https://laras.bpkp-diy.go.id/)
+//    define('BASE_URL', 'https://laras.bpkp-diy.go.id/');
+// 2. KALO SUBFOLDER DOMAIN UTAMA (contoh: https://bpkp-diy.go.id/laras/)
+//    define('BASE_URL', 'https://bpkp-diy.go.id/laras/');
+// 3. KALO LOCAL LARAGON (default sebelumnya):
+//    define('BASE_URL', 'http://localhost/AGUSTUS/peminjaman%20mobil/');
 define('APP_NAME', 'LARAS');
 define('APP_DESC', 'Layanan Aplikasi Reservasi Aset & Sarana');
 define('APP_INSTANSI', 'BPKP Perwakilan D.I. Yogyakarta');
