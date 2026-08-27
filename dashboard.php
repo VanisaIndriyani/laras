@@ -72,7 +72,7 @@ $recent_ruang = db()->fetchAll("SELECT rr.*, r.nama_ruangan, r.lantai, u.nama_le
     </h1>
 
     <p class="hero-desc">
-        Layanan Aplikasi Reservasi Aset & Sarana resmi untuk memudahkan pengajuan peminjaman kendaraan dinas,
+        Layanan Administrasi Reservasi Aset dan Sarana resmi untuk memudahkan pengajuan peminjaman kendaraan dinas,
         koordinasi driver, serta pemesanan ruang rapat secara <b>transparan</b>, <b>terjadwal</b>, dan <b>akuntabel</b>.
     </p>
 

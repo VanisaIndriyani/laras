@@ -30,7 +30,7 @@ if (!defined('BASE_URL')) define('BASE_URL', $base);
 // define('BASE_URL', 'http://localhost/AGUSTUS/peminjaman%20mobil/'); // LOCAL LARAGON
 // define('BASE_URL', 'https://laras.bpkp-diy.go.id/');         // SUBDOMAIN MASA DEPAN
 define('APP_NAME', 'LARAS');
-define('APP_DESC', 'Layanan Aplikasi Reservasi Aset & Sarana');
+define('APP_DESC', 'Layanan Administrasi Reservasi Aset dan Sarana');
 define('APP_INSTANSI', 'BPKP Perwakilan D.I. Yogyakarta');
 define('APP_INSTANSI_SHORT', 'BPKP DIY');
 define('APP_BAGIAN', 'Bagian Umum');

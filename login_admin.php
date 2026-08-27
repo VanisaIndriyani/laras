@@ -484,11 +484,11 @@ $favicon = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' view
     <div class="login-card">
 
         <!-- Brand -->
-        <div class="login-brand">
-            <div class="logo-wrap"><?php laras_logo(28); ?></div>
+        <div class="login-brand" style="flex-direction:column; gap:10px; text-align:center;">
+            <img src="<?= base_url('assets/logo.PNG') ?>" alt="Logo LARAS BPKP DIY" style="max-height:78px; width:auto; display:block; margin:0 auto;">
             <div class="brand-title">
-                <div class="app">LARAS</div>
-                <div class="sub">BPKP PERWAKILAN D.I. YOGYAKARTA</div>
+                <div class="sub" style="font-weight:600; letter-spacing:0.2px;">BPKP PERWAKILAN D.I. YOGYAKARTA</div>
+                <div class="sub" style="font-size:10.5px; opacity:0.8; margin-top:2px;">Layanan Administrasi Reservasi Aset dan Sarana</div>
             </div>
         </div>
 

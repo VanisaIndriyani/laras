@@ -97,7 +97,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <div class="logo"><?php laras_logo(54); ?></div>
             <div class="hd">
                 <h3>LARAS - Instalasi Aplikasi</h3>
-                <small>Layanan Aplikasi Reservasi Aset & Sarana</small>
+                <small>Layanan Administrasi Reservasi Aset dan Sarana</small>
             </div>
         </div>
         <div class="install-body">

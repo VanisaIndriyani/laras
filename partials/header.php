@@ -69,7 +69,9 @@ try {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#0B1C48">
-    <meta name="description" content="LARAS - Layanan Aplikasi Reservasi Aset & Sarana BPKP Perwakilan DIY">
+    <meta name="description" content="LARAS - Layanan Administrasi Reservasi Aset dan Sarana BPKP Perwakilan DIY">
+    <link rel="icon" type="image/png" href="<?= base_url('assets/logo.PNG') ?>">
+    <link rel="apple-touch-icon" href="<?= base_url('assets/logo.PNG') ?>">
     <title><?= $page_title ?> - <?= APP_NAME ?></title>
    
     <?php render_flash_metas(); ?>
