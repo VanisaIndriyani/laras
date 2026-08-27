@@ -73,10 +73,10 @@
         if (!q) return;
         var map = [
             { keys: ['dashboard','home','beranda','halaman utama'], url: 'dashboard.php' },
-            { keys: ['kendaraan','mobil','armada','unit'], url: 'kendaraan/' },
-            { keys: ['pinjam mobil','reservasi kendaraan','tambah pinjam mobil'], url: 'kendaraan/tambah.php' },
-            { keys: ['ruangan','ruang','meeting','rapat','sarana'], url: 'ruangan/' },
-            { keys: ['pinjam ruang','reservasi ruangan','rapat','tambah ruang'], url: 'ruangan/tambah.php' },
+            { keys: ['kendaraan','mobil','armada','unit'], url: 'kendaraan/index.php' },
+            { keys: ['pinjam mobil','reservasi kendaraan','tambah pinjam mobil'], url: 'kendaraan/form.php' },
+            { keys: ['ruangan','ruang','meeting','rapat','sarana'], url: 'ruangan/index.php' },
+            { keys: ['pinjam ruang','reservasi ruangan','rapat','tambah ruang'], url: 'ruangan/form.php' },
             { keys: ['kalender','calendar','jadwal','peminjaman','agenda'], url: 'kalender.php' },
             { keys: ['laporan','rekapitulasi','rekap','export','csv','download'], url: 'laporan.php' },
             { keys: ['approval','setujui','acc','pending','pengajuan'], url: 'master/approvals.php' },

@@ -77,14 +77,14 @@ $recent_ruang = db()->fetchAll("SELECT rr.*, r.nama_ruangan, r.lantai, u.nama_le
     </p>
 
     <div class="hero-actions">
-        <a href="<?= base_url('kendaraan/tambah.php') ?>" class="hero-btn primary">
+        <a href="<?= base_url('kendaraan/form.php') ?>" class="hero-btn primary">
             <i class="bi bi-car-front-fill"></i> Ajukan Reservasi Kendaraan
         </a>
-        <a href="<?= base_url('ruangan/tambah.php') ?>" class="hero-btn ghost">
+        <a href="<?= base_url('ruangan/form.php') ?>" class="hero-btn ghost">
             <i class="bi bi-door-open-fill"></i> Ajukan Reservasi Ruangan
         </a>
         <?php if ($total_pending > 0): ?>
-            <a href="<?= base_url($isAdmin ? 'master/approvals.php' : 'kendaraan/') ?>" class="hero-btn ghost">
+            <a href="<?= base_url($isAdmin ? 'master/approvals.php' : 'kendaraan/index.php') ?>" class="hero-btn ghost">
                 <i class="bi bi-clock-history"></i> <?= $total_pending ?> Menunggu Approval
             </a>
         <?php endif; ?>
