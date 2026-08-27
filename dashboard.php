@@ -430,7 +430,7 @@ $recent_ruang = db()->fetchAll("SELECT rr.*, r.nama_ruangan, r.lantai, u.nama_le
             <div class="modul-icon"><i class="bi bi-calendar2-check-fill"></i></div>
             <div class="modul-name">Reservasi Kendaraan</div>
             <div class="modul-desc">Ajukan peminjaman kendaraan dinas dengan mudah dan cepat.</div>
-            <a href="<?= base_url('kendaraan/tambah.php') ?>" class="modul-link">
+            <a href="<?= base_url('kendaraan/form.php') ?>" class="modul-link">
                 Buat Pengajuan <i class="bi bi-arrow-right"></i>
             </a>
         </div>
@@ -440,7 +440,7 @@ $recent_ruang = db()->fetchAll("SELECT rr.*, r.nama_ruangan, r.lantai, u.nama_le
             <div class="modul-icon"><i class="bi bi-buildings-fill"></i></div>
             <div class="modul-name">Reservasi Ruangan</div>
             <div class="modul-desc">Pesan ruang rapat sesuai jadwal yang Anda butuhkan.</div>
-            <a href="<?= base_url('ruangan/tambah.php') ?>" class="modul-link">
+            <a href="<?= base_url('ruangan/form.php') ?>" class="modul-link">
                 Buat Pengajuan <i class="bi bi-arrow-right"></i>
             </a>
         </div>
@@ -460,7 +460,7 @@ $recent_ruang = db()->fetchAll("SELECT rr.*, r.nama_ruangan, r.lantai, u.nama_le
             <div class="modul-icon"><i class="bi bi-people-fill"></i></div>
             <div class="modul-name">Approval Pengajuan</div>
             <div class="modul-desc">Review dan setujui pengajuan dari pengguna.</div>
-            <a href="<?= base_url($isAdmin ? 'master/approvals.php' : 'kendaraan/') ?>" class="modul-link">
+            <a href="<?= base_url($isAdmin ? 'master/approvals.php' : 'kendaraan/index.php') ?>" class="modul-link">
                 Lihat Pengajuan <i class="bi bi-arrow-right"></i>
             </a>
         </div>
