@@ -12,24 +12,34 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $nama = sanitize($_POST['nama_lengkap']);
             $role = sanitize($_POST['role']);
             $unit = sanitize($_POST['unit_kerja']);
-            $hp = sanitize($_POST['no_hp']);
-            $pass = $role === 'admin' ? password_hash('password', PASSWORD_DEFAULT) : '';
-            if (!$nip || !$nama) throw new Exception('Lengkapi data wajib.');
-            $cek = db()->count('users', 'nip = ?', [$nip]);
-            if ($cek > 0) throw new Exception('NIP sudah ada.');
-            db()->insert('users', compact('nip', 'nama_lengkap', 'password', 'role', 'unit_kerja', 'no_hp'));
-            $password = $pass;
-            $nama_lengkap = $nama;
-            $unit_kerja = $unit;
-            $no_hp = $hp;
+           
+         $pass = $role === 'admin' ? password_hash('password', PASSWORD_DEFAULT) : '';
+
+if (!$nip || !$nama) throw new Exception('Lengkapi data wajib.');
+
+$cek = db()->count('users', 'nip = ?', [$nip]);
+if ($cek > 0) throw new Exception('NIP sudah ada.');
+
+$nama_lengkap = $nama;
+$password = $pass;
+$unit_kerja = $unit;
+
+db()->insert('users', compact(
+    'nip',
+    'nama_lengkap',
+    'password',
+    'role',
+    'unit_kerja'
+));
+           
             set_flash('success', 'Pengguna berhasil ditambahkan.');
         } elseif ($act === 'edit') {
             $id = (int)$_POST['id'];
             $nama = sanitize($_POST['nama_lengkap']);
             $role = sanitize($_POST['role']);
             $unit = sanitize($_POST['unit_kerja']);
-            $hp = sanitize($_POST['no_hp']);
-            $upd = ['nama_lengkap' => $nama, 'role' => $role, 'unit_kerja' => $unit, 'no_hp' => $hp];
+         
+            $upd = ['nama_lengkap' => $nama, 'role' => $role, 'unit_kerja' => $unit,];
             if ($role === 'admin' && !empty($_POST['reset_password'])) {
                 $upd['password'] = password_hash('password', PASSWORD_DEFAULT);
             }
@@ -90,7 +100,7 @@ $jmlPegawai = db()->count('users', "role = 'pegawai'");
         <div class="table-responsive">
             <table class="table table-sm mb-0">
                 <thead>
-                    <tr><th>NIP</th><th>Nama Lengkap</th><th>Role</th><th>Unit Kerja</th><th>No. HP</th><th>Aksi</th></tr>
+                    <tr><th>NIP</th><th>Nama Lengkap</th><th>Role</th><th>Unit Kerja</th><th>Aksi</th></tr>
                 </thead>
                 <tbody>
                     <?php foreach ($users as $u): ?>
@@ -105,10 +115,10 @@ $jmlPegawai = db()->count('users', "role = 'pegawai'");
                             <?php endif; ?>
                         </td>
                         <td style="font-size:11px"><?= $u['unit_kerja'] ?: '-' ?></td>
-                        <td style="font-size:11px"><?= $u['no_hp'] ?: '-' ?></td>
+                   
                         <td>
                             <div class="d-flex gap-1">
-                                <button class="btn btn-sm btn-secondary" onclick="editUser(<?= $u['id'] ?>, '<?= sanitize($u['nip']) ?>', '<?= sanitize($u['nama_lengkap']) ?>', '<?= sanitize($u['role']) ?>', '<?= sanitize($u['unit_kerja']) ?>', '<?= sanitize($u['no_hp']) ?>')"><i class="bi bi-pencil"></i></button>
+                                <button class="btn btn-sm btn-secondary" onclick="editUser(<?= $u['id'] ?>, '<?= sanitize($u['nip']) ?>', '<?= sanitize($u['nama_lengkap']) ?>', '<?= sanitize($u['role']) ?>', '<?= sanitize($u['unit_kerja']) ?>')"><i class="bi bi-pencil"></i></button>
                                 <?php if ($u['id'] != $user['id']): ?>
                                 <form method="POST" action="<?= base_url('master/users.php') ?>" onsubmit="return confirm('Yakin hapus pengguna ini?')" style="display:inline">
                                     <input type="hidden" name="act" value="hapus">
@@ -156,10 +166,7 @@ $jmlPegawai = db()->count('users', "role = 'pegawai'");
                             <?php endforeach; ?>
                         </select>
                     </div>
-                    <div class="col-md-5">
-                        <label class="form-label">Nomor HP / WA</label>
-                        <input type="text" class="form-control" name="no_hp" placeholder="08xxxxxxxxxx">
-                    </div>
+                   
                     <div class="col-md-12">
                         <small style="color:#f59e0b"><i class="bi bi-info-circle me-1"></i> Admin akan mendapatkan password default: <code style="background:#fef3c7;padding:2px 6px;border-radius:4px">password</code>. Pegawai login hanya dengan NIP.</small>
                     </div>
@@ -204,10 +211,7 @@ $jmlPegawai = db()->count('users', "role = 'pegawai'");
                             <?php endforeach; ?>
                         </select>
                     </div>
-                    <div class="col-md-5">
-                        <label class="form-label">Nomor HP / WA</label>
-                        <input type="text" class="form-control" name="no_hp" id="e_hp">
-                    </div>
+                   
                     <div class="col-md-12">
                         <div class="form-check">
                             <input class="form-check-input" type="checkbox" name="reset_password" id="e_reset">
@@ -225,13 +229,13 @@ $jmlPegawai = db()->count('users', "role = 'pegawai'");
 </div>
 
 <script>
-function editUser(id, nip, nama, role, unit, hp) {
+function editUser(id, nip, nama, role, unit) {
     document.getElementById('e_id').value = id;
     document.getElementById('e_nip').value = nip;
     document.getElementById('e_nama').value = nama;
     document.getElementById('e_role').value = role;
     document.getElementById('e_unit').value = unit;
-    document.getElementById('e_hp').value = hp || '';
+
     new bootstrap.Modal(document.getElementById('editModal')).show();
 }
 </script>

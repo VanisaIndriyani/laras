@@ -2752,10 +2752,11 @@ try {
 <!-- Sidebar -->
 <aside class="sidebar <?= is_admin() ? 'admin' : '' ?>" id="sidebar">
     <div class="brand-sidebar">
-        <div class="brand-row">
-            <div style="min-width:0;flex:1;padding-left:2px">
-                <h6><?= APP_NAME ?></h6>
-                <div class="tagline"><?= defined('APP_INSTANSI_SHORT') ? APP_INSTANSI_SHORT : (defined('APP_INSTANSI') ? APP_INSTANSI : 'BPKP DIY') ?></div>
+        <div class="brand-row" style="flex-direction:column;align-items:center;gap:12px;padding:4px 2px 8px;text-align:center;">
+            <img src="<?= base_url('assets/logo.PNG') ?>" alt="Logo LARAS" style="width:60px;height:60px;object-fit:contain;flex-shrink:0;border-radius:17px;background:linear-gradient(145deg,rgba(255,255,255,0.14),rgba(255,255,255,0.06));padding:7px;border:1.5px solid rgba(147,197,253,0.5);box-shadow:0 8px 20px -6px rgba(0,0,0,0.55),inset 0 1px 0 rgba(255,255,255,0.18);">
+            <div style="min-width:0;width:100%">
+                <h6 style="text-align:center;"><?= APP_NAME ?></h6>
+                <div class="tagline" style="justify-content:center;"><?= defined('APP_INSTANSI_SHORT') ? APP_INSTANSI_SHORT : (defined('APP_INSTANSI') ? APP_INSTANSI : 'BPKP DIY') ?></div>
             </div>
         </div>
         <span class="bagian-tag <?= $user['role'] === 'admin' ? 'admin' : '' ?>">

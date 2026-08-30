@@ -36,6 +36,27 @@ try {
                 throw new Exception('Tanggal selesai tidak valid.');
             }
 
+            $conflict = db()->fetchOne(
+                "SELECT COUNT(*) AS c FROM reservasi_kendaraan
+                 WHERE kendaraan_id = ? AND status IN ('pending','disetujui')
+                   AND NOT (
+                        (tanggal_kembali < ?) OR
+                        (tanggal_pinjam > ?) OR
+                        (tanggal_kembali = ? AND jam_selesai <= ?) OR
+                        (tanggal_pinjam = ? AND jam_mulai >= ?)
+                   )",
+                [
+                    $kendaraan_id,
+                    $tgl_pinjam,
+                    $tgl_kembali,
+                    $tgl_pinjam, $jam_mulai,
+                    $tgl_kembali, $jam_selesai
+                ]
+            );
+            if ((int)($conflict['c'] ?? 0) > 0) {
+                throw new Exception('Maaf, kendaraan ini SUDAH DIBOOKING pada jadwal yang sama (bertabrakan dengan pengajuan Pending / Disetujui lain). Silakan pilih unit / jam / tanggal lain.');
+            }
+
             $kode = generate_kode_reservasi('MOBIL');
             $now = date('Y-m-d H:i:s');
 
@@ -85,6 +106,27 @@ try {
             $jam_selesai = sanitize($_POST['jam_selesai'] ?? '');
 
             if (!$kendaraan_id || !$tujuan || !$keperluan) throw new Exception('Lengkapi kolom wajib.');
+
+            $conflict = db()->fetchOne(
+                "SELECT COUNT(*) AS c FROM reservasi_kendaraan
+                 WHERE kendaraan_id = ? AND id != ? AND status IN ('pending','disetujui')
+                   AND NOT (
+                        (tanggal_kembali < ?) OR
+                        (tanggal_pinjam > ?) OR
+                        (tanggal_kembali = ? AND jam_selesai <= ?) OR
+                        (tanggal_pinjam = ? AND jam_mulai >= ?)
+                   )",
+                [
+                    $kendaraan_id, $editId,
+                    $tgl_pinjam,
+                    $tgl_kembali,
+                    $tgl_pinjam, $jam_mulai,
+                    $tgl_kembali, $jam_selesai
+                ]
+            );
+            if ((int)($conflict['c'] ?? 0) > 0) {
+                throw new Exception('Maaf, kendaraan ini SUDAH DIBOOKING pada jadwal yang sama (bertabrakan dengan pengajuan Pending / Disetujui lain). Silakan pilih unit / jam / tanggal lain.');
+            }
 
             db()->update('reservasi_kendaraan', [
                 'kendaraan_id' => $kendaraan_id,
@@ -136,6 +178,32 @@ try {
                 'approved_at' => date('Y-m-d H:i:s')
             ];
 
+            $current = db()->fetchOne("SELECT * FROM reservasi_kendaraan WHERE id = ?", [$id]);
+            if (!$current) throw new Exception('Data reservasi tidak ditemukan.');
+
+            if ($keputusan === 'disetujui') {
+                $conflict = db()->fetchOne(
+                    "SELECT COUNT(*) AS c FROM reservasi_kendaraan
+                     WHERE kendaraan_id = ? AND id != ? AND status IN ('pending','disetujui')
+                       AND NOT (
+                            (tanggal_kembali < ?) OR
+                            (tanggal_pinjam > ?) OR
+                            (tanggal_kembali = ? AND jam_selesai <= ?) OR
+                            (tanggal_pinjam = ? AND jam_mulai >= ?)
+                       )",
+                    [
+                        (int)$current['kendaraan_id'], $id,
+                        $current['tanggal_pinjam'],
+                        $current['tanggal_kembali'],
+                        $current['tanggal_pinjam'], $current['jam_mulai'],
+                        $current['tanggal_kembali'], $current['jam_selesai']
+                    ]
+                );
+                if ((int)($conflict['c'] ?? 0) > 0) {
+                    throw new Exception('Tidak dapat disetujui: Kendaraan sudah ada jadwal pemakaian lain yang bertabrakan pada jam & tanggal yang sama.');
+                }
+            }
+
             db()->update('reservasi_kendaraan', $upd, 'id = ?', [$id]);
 
             if ($keputusan === 'disetujui') {
@@ -166,6 +234,27 @@ try {
             $id = (int)($_GET['id'] ?? 0);
             $data = db()->fetchOne("SELECT * FROM reservasi_kendaraan WHERE id = ? AND status = 'pending'", [$id]);
             if (!$data) throw new Exception('Data reservasi tidak sah untuk disetujui.');
+
+            $conflict = db()->fetchOne(
+                "SELECT COUNT(*) AS c FROM reservasi_kendaraan
+                 WHERE kendaraan_id = ? AND id != ? AND status IN ('pending','disetujui')
+                   AND NOT (
+                        (tanggal_kembali < ?) OR
+                        (tanggal_pinjam > ?) OR
+                        (tanggal_kembali = ? AND jam_selesai <= ?) OR
+                        (tanggal_pinjam = ? AND jam_mulai >= ?)
+                   )",
+                [
+                    (int)$data['kendaraan_id'], $id,
+                    $data['tanggal_pinjam'],
+                    $data['tanggal_kembali'],
+                    $data['tanggal_pinjam'], $data['jam_mulai'],
+                    $data['tanggal_kembali'], $data['jam_selesai']
+                ]
+            );
+            if ((int)($conflict['c'] ?? 0) > 0) {
+                throw new Exception('Tidak dapat disetujui: Kendaraan sudah ada jadwal pemakaian lain yang bertabrakan pada jam & tanggal yang sama.');
+            }
 
             $upd = [
                 'status' => 'disetujui',

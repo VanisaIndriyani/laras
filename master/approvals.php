@@ -17,10 +17,38 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (!in_array($keputusan, ['disetujui', 'ditolak'])) throw new Exception('Keputusan tidak valid.');
         $upd = ['status' => $keputusan, 'catatan_approval' => $catatan, 'approved_by' => $user_id, 'approved_at' => $now];
         if ($tipe === 'kendaraan') {
+            $kendaraan_baru = !empty($_POST['kendaraan_baru']) ? (int)$_POST['kendaraan_baru'] : 0;
+            $current = db()->fetchOne("SELECT * FROM reservasi_kendaraan WHERE id = ?", [$id]);
+            if (!$current) throw new Exception('Data reservasi tidak ditemukan.');
+            $final_kendaraan_id = $kendaraan_baru > 0 ? $kendaraan_baru : (int)$current['kendaraan_id'];
+
+            if ($keputusan === 'disetujui') {
+                $conflict = db()->fetchOne(
+                    "SELECT COUNT(*) AS c FROM reservasi_kendaraan
+                     WHERE kendaraan_id = ? AND id != ? AND status IN ('pending','disetujui')
+                       AND NOT (
+                            (tanggal_kembali < ?) OR
+                            (tanggal_pinjam > ?) OR
+                            (tanggal_kembali = ? AND jam_selesai <= ?) OR
+                            (tanggal_pinjam = ? AND jam_mulai >= ?)
+                       )",
+                    [
+                        $final_kendaraan_id, $id,
+                        $current['tanggal_pinjam'],
+                        $current['tanggal_kembali'],
+                        $current['tanggal_pinjam'], $current['jam_mulai'],
+                        $current['tanggal_kembali'], $current['jam_selesai']
+                    ]
+                );
+                if ((int)($conflict['c'] ?? 0) > 0) {
+                    throw new Exception('Tidak dapat disetujui: Kendaraan sudah ada jadwal pemakaian lain yang bertabrakan pada jam & tanggal yang sama. Silakan ganti unit kendaraan melalui dropdown atau tolak pengajuan ini.');
+                }
+            }
+
+            $upd['kendaraan_id'] = $final_kendaraan_id;
             db()->update('reservasi_kendaraan', $upd, 'id = ?', [$id]);
             if ($keputusan === 'disetujui') {
-                $r = db()->fetchOne("SELECT kendaraan_id FROM reservasi_kendaraan WHERE id = ?", [$id]);
-                db()->update('kendaraan', ['status' => 'digunakan'], 'id = ?', [$r['kendaraan_id']]);
+                db()->update('kendaraan', ['status' => 'digunakan'], 'id = ?', [$final_kendaraan_id]);
             }
         } else {
             db()->update('reservasi_ruangan', $upd, 'id = ?', [$id]);
@@ -38,7 +66,8 @@ $pendingMobil = db()->fetchAll("SELECT rk.*, k.no_plat, k.merk, k.tipe, u.nama_l
 $pendingRuang = db()->fetchAll("SELECT rr.*, r.nama_ruangan, r.lantai, r.kapasitas, u.nama_lengkap, u.nip, u.unit_kerja
     FROM reservasi_ruangan rr JOIN ruangan r ON rr.ruangan_id = r.id JOIN users u ON rr.user_id = u.id
     WHERE rr.status = 'pending' ORDER BY rr.created_at ASC");
-$total = count($pendingMobil) + count($pendingRuang);
+$daftarKendaraan = db()->fetchAll("SELECT id, no_plat, merk, tipe, status FROM kendaraan ORDER BY no_plat ASC");
+$count = count($pendingMobil) + count($pendingRuang);
 ?>
 
 <div class="page-header">
@@ -51,7 +80,7 @@ $total = count($pendingMobil) + count($pendingRuang);
 </div>
 
 <div class="row g-3 mb-3">
-    <div class="col-md-3 col-6"><div class="stat-card"><div class="stat-icon amber"><i class="bi bi-hourglass-split"></i></div><div class="stat-label">Menunggu Persetujuan</div><div class="stat-value"><?= $total ?></div></div></div>
+    <div class="col-md-3 col-6"><div class="stat-card"><div class="stat-icon amber"><i class="bi bi-hourglass-split"></i></div><div class="stat-label">Menunggu Persetujuan</div><div class="stat-value"><?= $count ?></div></div></div>
     <div class="col-md-3 col-6"><div class="stat-card"><div class="stat-icon blue"><i class="bi bi-car-front-fill"></i></div><div class="stat-label">Reservasi Kendaraan</div><div class="stat-value"><?= count($pendingMobil) ?></div></div></div>
     <div class="col-md-3 col-6"><div class="stat-card"><div class="stat-icon purple"><i class="bi bi-door-open-fill"></i></div><div class="stat-label">Reservasi Ruangan</div><div class="stat-value"><?= count($pendingRuang) ?></div></div></div>
     <div class="col-md-3 col-6"><div class="stat-card"><div class="stat-icon green"><i class="bi bi-person-clock"></i></div><div class="stat-label">Proses Cepat</div><div class="stat-value">1x Klik</div><div class="stat-sub">Approval modal cepat</div></div></div>
@@ -85,8 +114,8 @@ $total = count($pendingMobil) + count($pendingRuang);
                                     <div style="font-size:10.5px;color:#64748b;margin-top:2px"><i class="bi bi-calendar me-1"></i><?= format_date($m['tanggal_pinjam'], false) ?> <?= date('H:i', strtotime($m['jam_mulai'])) ?> - <?= format_date($m['tanggal_kembali'], false) ?> <?= date('H:i', strtotime($m['jam_selesai'])) ?></div>
                                     <div class="mt-2 d-flex gap-2">
                                         <a href="<?= base_url('kendaraan/detail.php?id=' . $m['id']) ?>" class="btn btn-sm btn-secondary"><i class="bi bi-eye"></i> Detail</a>
-                                        <button class="btn btn-sm btn-success" onclick='approveForm("kendaraan", <?= $m['id'] ?>, "<?= sanitize($m['kode_reservasi']) ?>", "<?= sanitize($m['no_plat'] . ' - ' . $m['tujuan']) ?>", "disetujui")'><i class="bi bi-check-lg"></i> Setujui</button>
-                                        <button class="btn btn-sm btn-danger" onclick='approveForm("kendaraan", <?= $m['id'] ?>, "<?= sanitize($m['kode_reservasi']) ?>", "<?= sanitize($m['no_plat'] . ' - ' . $m['tujuan']) ?>", "ditolak")'><i class="bi bi-x-lg"></i> Tolak</button>
+                                        <button class="btn btn-sm btn-success" onclick='approveForm("kendaraan", <?= $m['id'] ?>, "<?= sanitize($m['kode_reservasi']) ?>", "<?= sanitize($m['no_plat'] . ' - ' . $m['tujuan']) ?>", "<?= (int)$m['kendaraan_id'] ?>", "disetujui")'><i class="bi bi-check-lg"></i> Setujui</button>
+                                        <button class="btn btn-sm btn-danger" onclick='approveForm("kendaraan", <?= $m['id'] ?>, "<?= sanitize($m['kode_reservasi']) ?>", "<?= sanitize($m['no_plat'] . ' - ' . $m['tujuan']) ?>", "<?= (int)$m['kendaraan_id'] ?>", "ditolak")'><i class="bi bi-x-lg"></i> Tolak</button>
                                     </div>
                                 </div>
                             </div>
@@ -148,6 +177,24 @@ $total = count($pendingMobil) + count($pendingRuang);
         <input type="hidden" name="keputusan" id="apv_keputusan">
         <div class="modal-body">
             <div id="apv_info" class="mb-3 p-3 rounded-3" style="background:#f8fafc;border:1px solid #e2e8f0;font-size:11.5px"></div>
+            <div id="apv_kendaraan_wrap" class="mb-3 d-none">
+                <label class="form-label mb-1.5" style="font-size:11.5px;font-weight:700;color:#0f172a">Unit Kendaraan yang Disetujui <span class="text-danger">*</span></label>
+                <div class="text-muted mb-1.5" style="font-size:10px;color:#64748b">Dapat diganti dengan unit lain apabila unit pengajuan awal tidak tersedia / bentrok jadwal.</div>
+                <select class="form-select" name="kendaraan_baru" id="apv_kendaraan" style="border-radius:10px;font-size:11.5px;padding:0.6rem 2.25rem 0.6rem 0.85rem">
+                    <?php foreach ($daftarKendaraan as $k): ?>
+                        <option value="<?= (int)$k['id'] ?>" data-status="<?= $k['status'] ?>">
+                            <?= strtoupper($k['no_plat']) ?> — <?= $k['merk'] ?> <?= $k['tipe'] ?>
+                            <?php if ($k['status'] === 'tersedia'): ?>
+                                [Tersedia]
+                            <?php elseif ($k['status'] === 'digunakan'): ?>
+                                [Sedang Dipakai]
+                            <?php else: ?>
+                                [Tidak Aktif]
+                            <?php endif; ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
             <label class="form-label">Catatan (Opsional)</label>
             <textarea class="form-control" name="catatan" rows="3" placeholder="Tuliskan catatan untuk pemohon..."></textarea>
         </div>
@@ -159,13 +206,24 @@ $total = count($pendingMobil) + count($pendingRuang);
 </div></div></div>
 
 <script>
-function approveForm(tipe, id, kode, detail, keputusan) {
+function approveForm(tipe, id, kode, detail, kendaraanId, keputusan) {
     document.getElementById('apv_tipe').value = tipe;
     document.getElementById('apv_id').value = id;
     document.getElementById('apv_keputusan').value = keputusan;
     const header = document.getElementById('apvHeader');
     const info = document.getElementById('apv_info');
     const btn = document.getElementById('apv_btn');
+    const wrapK = document.getElementById('apv_kendaraan_wrap');
+    const selK = document.getElementById('apv_kendaraan');
+    if (tipe === 'kendaraan' && keputusan === 'disetujui') {
+        wrapK.classList.remove('d-none');
+        if (kendaraanId && selK) {
+            selK.value = String(kendaraanId);
+        }
+    } else {
+        wrapK.classList.add('d-none');
+        if (selK) selK.value = '';
+    }
     if (keputusan === 'disetujui') {
         header.style.background = 'linear-gradient(90deg,#059669,#047857)';
         btn.className = 'btn btn-success';

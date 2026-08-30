@@ -36,13 +36,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             'merk' => sanitize($_POST['merk']),
             'tipe' => sanitize($_POST['tipe']),
             'tahun' => (int)$_POST['tahun'],
-            'kapasitas' => (int)$_POST['kapasitas'],
             'status' => sanitize($_POST['status']),
             'driver' => sanitize($_POST['driver']),
             'no_hp_driver' => sanitize($_POST['no_hp_driver']),
             'driver_id' => !empty($_POST['driver_id']) ? (int)$_POST['driver_id'] : null,
-            'kode_bmn' => sanitize($_POST['kode_bmn'] ?? null),
-            'unit_pengguna' => sanitize($_POST['unit_pengguna'] ?? null),
             'pajak_stnk_jatuh_tempo' => !empty($_POST['pajak_stnk_jatuh_tempo']) ? sanitize($_POST['pajak_stnk_jatuh_tempo']) : null,
             'pajak_tnkb_jatuh_tempo' => !empty($_POST['pajak_tnkb_jatuh_tempo']) ? sanitize($_POST['pajak_tnkb_jatuh_tempo']) : null,
             'terakhir_service' => !empty($_POST['terakhir_service']) ? sanitize($_POST['terakhir_service']) : null,
@@ -284,14 +281,13 @@ body.modal-open .sidebar, body.modal-open .topbar { padding-right: 0 !important;
             'tersedia' => count(array_filter($kendaraan, fn($k)=>$k['status']==='tersedia')),
             'digunakan' => count(array_filter($kendaraan, fn($k)=>$k['status']==='digunakan')),
             'perawatan' => count(array_filter($kendaraan, fn($k)=>$k['status']==='perawatan')),
-            'belum_atur_pajak' => count(array_filter($kendaraan, fn($k)=>empty($k['pajak_stnk_jatuh_tempo']) || empty($k['unit_pengguna'])))
+            'belum_atur_pajak' => count(array_filter($kendaraan, fn($k)=>empty($k['pajak_stnk_jatuh_tempo'])))
         ];
     ?>
-    <div class="col-md-2 col-6"><div class="stat-card"><div class="stat-icon blue"><i class="bi bi-car-front-fill"></i></div><div class="stat-label">Total</div><div class="stat-value"><?= $jml['total'] ?></div></div></div>
-    <div class="col-md-2 col-6"><div class="stat-card"><div class="stat-icon green"><i class="bi bi-check-circle-fill"></i></div><div class="stat-label">Tersedia</div><div class="stat-value"><?= $jml['tersedia'] ?></div></div></div>
-    <div class="col-md-2 col-6"><div class="stat-card"><div class="stat-icon cyan"><i class="bi bi-car-front"></i></div><div class="stat-label">Digunakan</div><div class="stat-value"><?= $jml['digunakan'] ?></div></div></div>
-    <div class="col-md-2 col-6"><div class="stat-card"><div class="stat-icon amber"><i class="bi bi-tools"></i></div><div class="stat-label">Perawatan</div><div class="stat-value"><?= $jml['perawatan'] ?></div></div></div>
-    <div class="col-md-2 col-6"><div class="stat-card"><div class="stat-icon" style="background:linear-gradient(135deg,#f59e0b,#dc2626);color:#fff"><i class="bi bi-exclamation-triangle-fill"></i></div><div class="stat-label">Belum Lengkap</div><div class="stat-value"><?= $jml['belum_atur_pajak'] ?></div></div></div>
+    <div class="col-md-3 col-6"><div class="stat-card"><div class="stat-icon blue"><i class="bi bi-car-front-fill"></i></div><div class="stat-label">Total</div><div class="stat-value"><?= $jml['total'] ?></div></div></div>
+    <div class="col-md-3 col-6"><div class="stat-card"><div class="stat-icon green"><i class="bi bi-check-circle-fill"></i></div><div class="stat-label">Tersedia</div><div class="stat-value"><?= $jml['tersedia'] ?></div></div></div>
+    <div class="col-md-3 col-6"><div class="stat-card"><div class="stat-icon cyan"><i class="bi bi-car-front"></i></div><div class="stat-label">Digunakan</div><div class="stat-value"><?= $jml['digunakan'] ?></div></div></div>
+    <div class="col-md-3 col-6"><div class="stat-card"><div class="stat-icon amber"><i class="bi bi-tools"></i></div><div class="stat-label">Perawatan</div><div class="stat-value"><?= $jml['perawatan'] ?></div></div></div>
 </div>
 
 <div class="card border-0 shadow-sm" style="border-radius:18px;border:1.5px solid #e5edf8;overflow:hidden">
@@ -300,20 +296,17 @@ body.modal-open .sidebar, body.modal-open .topbar { padding-right: 0 !important;
             <i class="bi bi-list-columns-reverse me-1" style="color:#3B5FC7"></i>Daftar Unit Kendaraan Dinas
         </h6>
         <div style="font-size:9.5px;color:#64748b;font-weight:600">
-            <i class="bi bi-info-circle me-1" style="color:#3B5FC7"></i>Klik <strong>Edit</strong> untuk mengisi data pajak, kode BMN, unit pengguna & jadwal service
+            <i class="bi bi-info-circle me-1" style="color:#3B5FC7"></i>Klik <strong>Edit</strong> untuk mengisi data pajak & jadwal service
         </div>
     </div>
     <div class="card-body p-0">
         <div class="table-responsive">
-            <table class="table table-sm mb-0 align-middle" style="min-width:1550px">
+            <table class="table table-sm mb-0 align-middle" style="min-width:1300px">
                 <thead style="background:linear-gradient(180deg,#f8fafc,#f1f5f9);position:sticky;top:0;z-index:2">
                     <tr>
                         <th style="padding:14px 18px;font-size:10.5px;font-weight:800;color:#475569;border-bottom:1.5px solid #e2e8f0">No. Plat</th>
                         <th style="padding:14px 18px;font-size:10.5px;font-weight:800;color:#475569;border-bottom:1.5px solid #e2e8f0">Merk / Tipe</th>
                         <th style="padding:14px 18px;font-size:10.5px;font-weight:800;color:#475569;border-bottom:1.5px solid #e2e8f0;min-width:90px">Thn</th>
-                        <th style="padding:14px 18px;font-size:10.5px;font-weight:800;color:#475569;border-bottom:1.5px solid #e2e8f0;min-width:130px">Kode BMN</th>
-                        <th style="padding:14px 18px;font-size:10.5px;font-weight:800;color:#475569;border-bottom:1.5px solid #e2e8f0;min-width:170px">Unit Pengguna</th>
-                        <th style="padding:14px 18px;font-size:10.5px;font-weight:800;color:#475569;border-bottom:1.5px solid #e2e8f0;min-width:110px">Kapasitas</th>
                         <th style="padding:14px 18px;font-size:10.5px;font-weight:800;color:#475569;border-bottom:1.5px solid #e2e8f0;min-width:130px">Driver</th>
                         <th style="padding:14px 18px;font-size:10.5px;font-weight:800;color:#0B1C48;border-bottom:1.5px solid #e2e8f0;background:rgba(59,95,199,0.04)">Status Pajak</th>
                         <th style="padding:14px 18px;font-size:10.5px;font-weight:800;color:#6d28d9;border-bottom:1.5px solid #e2e8f0;background:rgba(124,58,237,0.04)">Service</th>
@@ -353,25 +346,6 @@ body.modal-open .sidebar, body.modal-open .topbar { padding-right: 0 !important;
                         </td>
                         <td style="padding:15px 18px;font-size:11px;color:#475569;font-weight:700"><?= $k['tahun'] ?: '-' ?></td>
                         <td style="padding:15px 18px">
-                            <?php if (!empty($k['kode_bmn'])): ?>
-                                <span style="font-size:10.5px;color:#1F3A8B;font-weight:800;letter-spacing:0.3px;text-transform:uppercase"><?= sanitize($k['kode_bmn']) ?></span>
-                            <?php else: ?>
-                                <span class="pill-badge-mini" style="background:#fef3c7;color:#92400e;border:1px solid #fde68a">
-                                    <i class="bi bi-dash-circle-dotted" style="font-size:8px"></i>Belum diisi
-                                </span>
-                            <?php endif; ?>
-                        </td>
-                        <td style="padding:15px 18px">
-                            <?php if (!empty($k['unit_pengguna'])): ?>
-                                <div style="font-size:10.5px;color:#475569;font-weight:700;line-height:1.4"><?= sanitize($k['unit_pengguna']) ?></div>
-                            <?php else: ?>
-                                <span class="pill-badge-mini" style="background:rgba(239,68,68,0.08);color:#dc2626;border:1px solid rgba(239,68,68,0.2)">
-                                    <i class="bi bi-person-x-fill" style="font-size:8px"></i>Belum ditetapkan
-                                </span>
-                            <?php endif; ?>
-                        </td>
-                        <td style="padding:15px 18px;font-size:10.5px;color:#475569;font-weight:700"><?= (int)$k['kapasitas'] ?> org</td>
-                        <td style="padding:15px 18px">
                             <?php if (!empty($k['driver'])): ?>
                                 <div style="font-size:10.5px;color:#0f172a;font-weight:700"><?= sanitize($k['driver']) ?></div>
                                 <?php if (!empty($k['no_hp_driver'])): ?>
@@ -406,7 +380,7 @@ body.modal-open .sidebar, body.modal-open .topbar { padding-right: 0 !important;
                             <div class="d-flex gap-1.5 align-items-center justify-content-start">
                                 <button class="btn btn-sm fw-bold" onclick='editK(<?= json_encode($k, JSON_NUMERIC_CHECK) ?>)'
                                     style="background:rgba(31,58,139,0.08);color:#1F3A8B;border:none;border-radius:9px;padding:6px 10px;font-size:10px"
-                                    title="Edit data termasuk pajak, BMN, unit, service">
+                                    title="Edit data termasuk pajak & service">
                                     <i class="bi bi-pencil me-1"></i>Edit
                                 </button>
                                 <form method="POST" action="<?= base_url('master/kendaraan.php') ?>" onsubmit="return bsConfirm('Hapus kendaraan <?= sanitize($k['no_plat']) ?>? Data reservasi terkait tidak ikut terhapus.')" style="display:inline">
@@ -431,11 +405,6 @@ $basicFields = [
     ['name'=>'merk','label'=>'Merk *','type'=>'text','ph'=>'Contoh: Toyota','icon'=>'bi-bag-fill'],
     ['name'=>'tipe','label'=>'Tipe / Model *','type'=>'text','ph'=>'Contoh: Innova Zenix Q Hybrid','icon'=>'bi-car-front-fill'],
     ['name'=>'tahun','label'=>'Tahun Produksi','type'=>'number','ph'=>'2024','icon'=>'bi-calendar3'],
-    ['name'=>'kapasitas','label'=>'Kapasitas Penumpang (org)','type'=>'number','ph'=>'7','icon'=>'bi-people-fill'],
-];
-$bmnFields = [
-    ['name'=>'kode_bmn','label'=>'Kode BMN (Barang Milik Negara)','type'=>'text','ph'=>'Contoh: 3100102001xxx','icon'=>'bi-upc-scan'],
-    ['name'=>'unit_pengguna','label'=>'Unit Pengguna / Bidang','type'=>'text','ph'=>'Contoh: Bidang Investigasi','icon'=>'bi-building-fill-check'],
 ];
 $pajakFields = [
     ['name'=>'pajak_stnk_jatuh_tempo','label'=>'STNK 1 Tahunan — Jatuh Tempo','type'=>'date','ph'=>'YYYY-MM-DD','icon'=>'bi-stopwatch'],
@@ -465,14 +434,14 @@ function fl_input($prefix, $f, $value = '') {
     $height = $isTextarea ? "min-height:68px;padding-top:1.05rem" : "";
     $filledInit = ($value !== '' && $value !== null) ? "is-filled" : "";
     $baseInput = (!$isTextarea)
-        ? "padding-top:1rem;padding-bottom:0.38rem;font-size:11px;border-radius:10px;border:1.5px solid #dbe6f5"
-        : "padding-top:1.05rem;padding-bottom:0.4rem;font-size:11px;border-radius:10px;border:1.5px solid #dbe6f5";
+        ? "padding-top:1.15rem;padding-bottom:0.55rem;font-size:11.5px;border-radius:12px;border:1.5px solid #dbe6f5;transition:all .15s ease;box-shadow:none"
+        : "padding-top:1.15rem;padding-bottom:0.55rem;font-size:11.5px;border-radius:12px;border:1.5px solid #dbe6f5;transition:all .15s ease;box-shadow:none";
     if ($hasIcon && $isTextarea) {
-        $textareaIcon = "<i class='bi {$f['icon']}' style='font-size:11px;color:#3B5FC7;position:absolute;top:22px;left:12px;pointer-events:none;opacity:0.75;z-index:2'></i>";
+        $textareaIcon = "<i class='bi {$f['icon']}' style='font-size:11px;color:#3B5FC7;position:absolute;top:24px;left:13px;pointer-events:none;opacity:0.75;z-index:2'></i>";
         $icon = $textareaIcon;
     }
     echo "<div class='{$col}'>
-        <div class='{$wrapCls}' style='margin-bottom:8px'>
+        <div class='{$wrapCls}' style='margin-bottom:12px'>
             {$icon}
             " . ($isTextarea
                 ? "<textarea class='form-control {$filledInit}' name='{$f['name']}' id='{$id}' rows='3' style='{$height};{$baseInput}' {$placeholderAttr}>{$textareaContent}</textarea>"
@@ -482,13 +451,22 @@ function fl_input($prefix, $f, $value = '') {
     </div>";
 }
 
-function renderCustomForm($prefix, $basicFields, $bmnFields, $pajakFields, $serviceFields, $statusOps, $submitBtn, $drivers_list) {
-    echo '<div class="modal-body" style="padding:13px 16px 2px;background:linear-gradient(180deg,#fafcff 0%,#ffffff 100%)">';
+function renderCustomForm($prefix, $basicFields, $pajakFields, $serviceFields, $statusOps, $submitBtn, $drivers_list) {
+    echo '<div class="modal-body" style="padding:19px 24px 10px;background:linear-gradient(180deg,#f8faff 0%,#ffffff 100%)">';
 
     // SECTION 1: DATA DASAR KENDARAAN
-    echo '<div class="section-card">
-        <div class="section-card-title"><span class="section-dot"></span>Data Dasar Kendaraan <span style="margin-left:auto;font-weight:700;color:#dc2626;font-size:8.5px;letter-spacing:0.3px">* WAJIB</span></div>
-        <div class="row g-1.5" style="row-gap:4px">';
+    echo '<div style="border-radius:14px;border:1.5px solid #dbeafe;background:linear-gradient(180deg,#eff6ff 0%,#f8fbff 100%);padding:14px 16px 12px 16px;margin-bottom:14px;box-shadow:0 1px 2px rgba(59,95,199,0.04)">
+        <div class="d-flex align-items-center gap-2 mb-3" style="padding-bottom:9px;border-bottom:1.2px dashed #bfdbfe">
+            <div style="width:30px;height:30px;border-radius:9px;background:linear-gradient(135deg,#1F3A8B,#3B5FC7);display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 2px 6px rgba(59,95,199,0.2)">
+                <i class="bi bi-car-front-fill" style="font-size:13px;color:#fff"></i>
+            </div>
+            <div style="min-width:0;flex:1">
+                <div style="font-size:11.5px;color:#0B1C48;font-weight:800;letter-spacing:0.2px">Data Dasar Kendaraan</div>
+                <div style="font-size:8.5px;color:#3B5FC7;font-weight:700;letter-spacing:0.1px;margin-top:1px">Informasi identitas unit dinas (Plat, Merk, Tipe, Tahun)</div>
+            </div>
+            <span style="font-weight:800;color:#dc2626;font-size:8.5px;letter-spacing:0.3px;background:rgba(239,68,68,0.09);padding:2.5px 8px;border-radius:999px;border:1px solid rgba(239,68,68,0.2)">* WAJIB</span>
+        </div>
+        <div class="row g-2" style="row-gap:10px">';
     foreach ($basicFields as $f) { fl_input($prefix, $f); }
     echo '</div></div>';
 
@@ -496,13 +474,22 @@ function renderCustomForm($prefix, $basicFields, $bmnFields, $pajakFields, $serv
     $did = "{$prefix}_driver_id";
     $dna = "{$prefix}_driver";
     $dwa = "{$prefix}_no_hp_driver";
-    echo '<div class="section-card">
-        <div class="section-card-title"><span class="section-dot" style="background:linear-gradient(135deg,#0369a1,#0ea5e9);box-shadow:0 0 0 3px rgba(14,165,233,0.12)"></span>Data Driver &amp; Penugasan <span style="margin-left:auto;font-size:8px;background:rgba(14,165,233,0.1);color:#0369a1;padding:2px 8px;border-radius:99px;font-weight:800;letter-spacing:0.2px">TERHUBUNG MASTER DRIVER</span></div>
-        <div class="row g-1.5" style="row-gap:4px">
+    echo '<div style="border-radius:14px;border:1.5px solid #bae6fd;background:linear-gradient(180deg,#f0f9ff 0%,#f8fcff 100%);padding:14px 16px 12px 16px;margin-bottom:14px;box-shadow:0 1px 2px rgba(14,165,233,0.04)">
+        <div class="d-flex align-items-center gap-2 mb-3" style="padding-bottom:9px;border-bottom:1.2px dashed #7dd3fc">
+            <div style="width:30px;height:30px;border-radius:9px;background:linear-gradient(135deg,#0369a1,#0ea5e9);display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 2px 6px rgba(14,165,233,0.2)">
+                <i class="bi bi-person-gear" style="font-size:13px;color:#fff"></i>
+            </div>
+            <div style="min-width:0;flex:1">
+                <div style="font-size:11.5px;color:#0c4a6e;font-weight:800;letter-spacing:0.2px">Data Driver &amp; Penugasan</div>
+                <div style="font-size:8.5px;color:#0284c7;font-weight:700;letter-spacing:0.1px;margin-top:1px">Pilih driver dari Master → otomatis isi nama &amp; kontak WA</div>
+            </div>
+            <span style="font-size:8px;background:rgba(14,165,233,0.1);color:#0369a1;padding:2.5px 8px;border-radius:999px;font-weight:800;letter-spacing:0.2px;border:1px solid rgba(14,165,233,0.2)">TERHUBUNG MASTER DRIVER</span>
+        </div>
+        <div class="row g-2" style="row-gap:10px">
             <div class="col-md-12">
-                <div class="floating-label-wrap with-icon" style="margin-bottom:8px">
-                    <i class="bi bi-person-lines-fill" style="font-size:11px;color:#0ea5e9;position:absolute;top:50%;left:12px;transform:translateY(-50%);pointer-events:none;opacity:0.8;z-index:2"></i>
-                    <select class="form-select" name="driver_id" id="' . $did . '" onchange="driverAutoFill(this.value,\''.$prefix.'\')" style="padding-top:1rem;padding-bottom:0.38rem;font-size:11px;border-radius:10px;border:1.5px solid #dbe6f5">
+                <div class="floating-label-wrap with-icon" style="margin-bottom:12px">
+                    <i class="bi bi-person-lines-fill" style="font-size:12px;color:#0ea5e9;position:absolute;top:50%;left:13px;transform:translateY(-50%);pointer-events:none;opacity:0.85;z-index:2"></i>
+                    <select class="form-select" name="driver_id" id="' . $did . '" onchange="driverAutoFill(this.value,\''.$prefix.'\')" style="padding-top:1.15rem;padding-bottom:0.55rem;font-size:11.5px;border-radius:12px;border:1.5px solid #bfdbfe">
                         <option value="" selected>&nbsp;</option>
                         <optgroup label="Pilih Driver dari Master Data">';
     foreach ($drivers_list as $d) {
@@ -516,17 +503,25 @@ function renderCustomForm($prefix, $basicFields, $bmnFields, $pajakFields, $serv
                     <label class="float-label" for="'.$did.'" style="font-size:10.5px">Assign Driver dari Master Data (pilih disini)</label>
                 </div>
             </div>';
-    fl_input($prefix, ['name'=>'driver','label'=>'Nama Driver (bisa edit manual)','type'=>'text','ph'=>'Nama driver / supir','icon'=>'bi-person-gear']);
+    fl_input($prefix, ['name'=>'driver','label'=>'Nama Driver (bisa edit manual)','type'=>'text','ph'=>'Nama driver','icon'=>'bi-person-gear']);
     fl_input($prefix, ['name'=>'no_hp_driver','label'=>'Kontak WA Driver','type'=>'text','ph'=>'08xxxxxxxxxx (auto isi dari master)','icon'=>'bi-whatsapp']);
     echo '</div></div>';
 
     // SECTION STATUS
-    echo '<div class="section-card">
-        <div class="section-card-title"><span class="section-dot section-dot-amber"></span>Status &amp; Ketersediaan Unit</div>
-        <div class="row g-1.5" style="row-gap:4px">';
-    echo '<div class="col-md-6"><div class="floating-label-wrap with-icon" style="margin-bottom:8px">
-            <i class="bi bi-shield-check" style="font-size:11px;color:#059669;position:absolute;top:50%;left:12px;transform:translateY(-50%);pointer-events:none;opacity:0.85;z-index:2"></i>
-            <select class="form-select" name="status" id="' . $prefix . '_status" style="padding-top:1rem;padding-bottom:0.38rem;font-size:11px;border-radius:10px;border:1.5px solid #dbe6f5">
+    echo '<div style="border-radius:14px;border:1.5px solid #bbf7d0;background:linear-gradient(180deg,#f0fdf4 0%,#f8fef9 100%);padding:14px 16px 12px 16px;margin-bottom:14px;box-shadow:0 1px 2px rgba(22,163,74,0.04)">
+        <div class="d-flex align-items-center gap-2 mb-3" style="padding-bottom:9px;border-bottom:1.2px dashed #86efac">
+            <div style="width:30px;height:30px;border-radius:9px;background:linear-gradient(135deg,#065f46,#059669);display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 2px 6px rgba(16,185,129,0.2)">
+                <i class="bi bi-shield-check" style="font-size:13px;color:#fff"></i>
+            </div>
+            <div style="min-width:0;flex:1">
+                <div style="font-size:11.5px;color:#064e3b;font-weight:800;letter-spacing:0.2px">Status &amp; Ketersediaan Unit</div>
+                <div style="font-size:8.5px;color:#047857;font-weight:700;letter-spacing:0.1px;margin-top:1px">Menentukan apakah unit bisa di-assign untuk pengajuan reservasi</div>
+            </div>
+        </div>
+        <div class="row g-2" style="row-gap:10px">';
+    echo '<div class="col-md-6"><div class="floating-label-wrap with-icon" style="margin-bottom:12px">
+            <i class="bi bi-shield-check" style="font-size:12px;color:#059669;position:absolute;top:50%;left:13px;transform:translateY(-50%);pointer-events:none;opacity:0.9;z-index:2"></i>
+            <select class="form-select" name="status" id="' . $prefix . '_status" style="padding-top:1.15rem;padding-bottom:0.55rem;font-size:11.5px;border-radius:12px;border:1.5px solid #86efac">
                 <option value="" disabled selected hidden>&nbsp;</option>';
     foreach ($statusOps as $s) echo "<option value='{$s}'>" . ucfirst($s) . "</option>";
     echo '  </select>
@@ -534,39 +529,49 @@ function renderCustomForm($prefix, $basicFields, $bmnFields, $pajakFields, $serv
           </div></div>';
     echo '</div></div>';
 
-    // SECTION 3: BMN & UNIT PENGGUNA
-    echo '<div class="section-card">
-        <div class="section-card-title"><span class="section-dot section-dot-amber"></span>Kode BMN &amp; Penempatan Unit</div>
-        <div class="row g-1.5" style="row-gap:4px">';
-    foreach ($bmnFields as $f) { fl_input($prefix, $f); }
-    echo '</div></div>';
-
-    // SECTION 4: PAJAK & PENGINGAT
-    echo '<div class="section-card">
-        <div class="section-card-title"><span class="section-dot section-dot-amber"></span>Pengingat Pajak (Otomatis Muncul di Menu Informasi Pajak)</div>
-        <div class="row g-1.5" style="row-gap:4px">';
+    // SECTION 3: PAJAK & PENGINGAT
+    echo '<div style="border-radius:14px;border:1.5px solid #fed7aa;background:linear-gradient(180deg,#fff7ed 0%,#fffbf5 100%);padding:14px 16px 12px 16px;margin-bottom:14px;box-shadow:0 1px 2px rgba(249,115,22,0.04)">
+        <div class="d-flex align-items-center gap-2 mb-3" style="padding-bottom:9px;border-bottom:1.2px dashed #fdba74">
+            <div style="width:30px;height:30px;border-radius:9px;background:linear-gradient(135deg,#9a3412,#ea580c);display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 2px 6px rgba(249,115,22,0.2)">
+                <i class="bi bi-receipt-cutoff" style="font-size:13px;color:#fff"></i>
+            </div>
+            <div style="min-width:0;flex:1">
+                <div style="font-size:11.5px;color:#7c2d12;font-weight:800;letter-spacing:0.2px">Pengingat Pajak (STNK &amp; TNKB)</div>
+                <div style="font-size:8.5px;color:#c2410c;font-weight:700;letter-spacing:0.1px;margin-top:1px">Otomatis muncul di Menu Perpajakan beserta hitung mundur jatuh tempo</div>
+            </div>
+        </div>
+        <div class="row g-2" style="row-gap:10px">';
     foreach ($pajakFields as $f) { fl_input($prefix, $f); }
     echo '</div></div>';
 
-    // SECTION 5: SERVICE RUTIN
-    echo '<div class="section-card">
-        <div class="section-card-title"><span class="section-dot section-dot-purple"></span>Jadwal Service Rutin <span style="margin-left:auto;font-weight:700;color:#6d28d9;font-size:8.5px">Admin Only</span></div>
-        <div class="row g-1.5" style="row-gap:4px">';
+    // SECTION 4: SERVICE RUTIN
+    echo '<div style="border-radius:14px;border:1.5px solid #ddd6fe;background:linear-gradient(180deg,#faf5ff 0%,#fcfaff 100%);padding:14px 16px 12px 16px;margin-bottom:4px;box-shadow:0 1px 2px rgba(139,92,246,0.04)">
+        <div class="d-flex align-items-center gap-2 mb-3" style="padding-bottom:9px;border-bottom:1.2px dashed #c4b5fd">
+            <div style="width:30px;height:30px;border-radius:9px;background:linear-gradient(135deg,#5b21b6,#7c3aed);display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 2px 6px rgba(139,92,246,0.2)">
+                <i class="bi bi-wrench-adjustable-circle-fill" style="font-size:13px;color:#fff"></i>
+            </div>
+            <div style="min-width:0;flex:1">
+                <div style="font-size:11.5px;color:#4c1d95;font-weight:800;letter-spacing:0.2px">Jadwal Service Rutin</div>
+                <div style="font-size:8.5px;color:#6d28d9;font-weight:700;letter-spacing:0.1px;margin-top:1px">Terakhir service, jadwal kembali ke bengkel, &amp; catatan perbaikan</div>
+            </div>
+            <span style="font-weight:800;color:#6d28d9;font-size:8.5px;background:rgba(124,58,237,0.1);padding:2.5px 8px;border-radius:999px;border:1px solid rgba(124,58,237,0.22)">ADMIN ONLY</span>
+        </div>
+        <div class="row g-2" style="row-gap:10px">';
     foreach ($serviceFields as $f) { fl_input($prefix, $f); }
     echo '</div></div>';
 
-    echo '</div><div class="modal-footer" style="background:linear-gradient(180deg,#fff,#fafcff);border-top:1px solid #eef3fb;padding:10px 16px;gap:8px">
-        <button type="button" class="btn fw-semibold" data-bs-dismiss="modal" style="border-radius:10px;font-size:10.5px;border:1.5px solid #e2e8f0;background:#fff;color:#475569;padding:7.5px 16px">
-            <i class="bi bi-x-lg me-1"></i>Batal
+    echo '</div><div class="modal-footer" style="background:linear-gradient(180deg,#fff,#f8faff);border-top:1.5px solid #e8eef9;padding:12px 24px 14px;gap:10px">
+        <button type="button" class="btn fw-semibold" data-bs-dismiss="modal" style="border-radius:12px;font-size:10.5px;border:1.5px solid #e2e8f0;background:#fff;color:#475569;padding:9px 20px">
+            <i class="bi bi-x-lg me-1.5"></i>Batal
         </button>
-        <button type="submit" class="btn fw-bold" style="border-radius:10px;font-size:10.5px;background:linear-gradient(135deg,#059669,#047857);border:none;color:#fff;padding:7.5px 18px;box-shadow:0 3px 10px rgba(5,150,105,0.22)">
-            <i class="bi bi-save-fill me-1"></i>' . $submitBtn . '
+        <button type="submit" class="btn fw-bold" style="border-radius:12px;font-size:10.5px;background:linear-gradient(135deg,#059669,#047857);border:none;color:#fff;padding:9px 22px;box-shadow:0 3px 12px rgba(5,150,105,0.25)">
+            <i class="bi bi-save-fill me-1.5"></i>' . $submitBtn . '
         </button>
     </div>';
 }
 ?>
 
-<div class="modal fade" id="tambahModal" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-scrollable"><div class="modal-content" style="border-radius:18px;border:1.5px solid #e5edf8;box-shadow:0 20px 60px rgba(11,28,72,0.16);overflow:hidden">
+<div class="modal fade" id="tambahModal" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-scrollable" style="max-width:980px"><div class="modal-content" style="border-radius:18px;border:1.5px solid #e5edf8;box-shadow:0 20px 60px rgba(11,28,72,0.16);overflow:hidden">
     <div class="modal-header d-flex align-items-center" style="background:linear-gradient(135deg,#0B1C48,#1F3A8B 50%,#3B5FC7);color:#fff;border:none;padding:16px 22px">
         <div class="d-flex align-items-center gap-3" style="flex:1">
             <div style="width:38px;height:38px;border-radius:11px;background:rgba(255,255,255,0.14);display:flex;align-items:center;justify-content:center;border:1px solid rgba(255,255,255,0.18)">
@@ -574,17 +579,17 @@ function renderCustomForm($prefix, $basicFields, $bmnFields, $pajakFields, $serv
             </div>
             <div>
                 <h5 class="modal-title mb-0" style="font-size:14px;font-weight:800;letter-spacing:0.2px">Tambah Kendaraan Baru</h5>
-                <div style="font-size:9.5px;color:rgba(255,255,255,0.7);margin-top:2px;font-weight:600;letter-spacing:0.15px">Isi data dasar, BMN, penempatan, pajak & jadwal service sekaligus</div>
+                <div style="font-size:9.5px;color:rgba(255,255,255,0.7);margin-top:2px;font-weight:600;letter-spacing:0.15px">Isi data dasar unit, driver, status, pajak &amp; jadwal service kendaraan dinas</div>
             </div>
         </div>
         <button class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
     </div>
     <form method="POST" action="<?= base_url('master/kendaraan.php') ?>"><input type="hidden" name="act" value="tambah">
-        <?php renderCustomForm('t', $basicFields, $bmnFields, $pajakFields, $serviceFields, $statusOps, 'Simpan Data Kendaraan', $drivers_list); ?>
+        <?php renderCustomForm('t', $basicFields, $pajakFields, $serviceFields, $statusOps, 'Simpan Data Kendaraan', $drivers_list); ?>
     </form>
 </div></div></div>
 
-<div class="modal fade" id="editModal" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-scrollable"><div class="modal-content" style="border-radius:18px;border:1.5px solid #e5edf8;box-shadow:0 20px 60px rgba(11,28,72,0.16);overflow:hidden">
+<div class="modal fade" id="editModal" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-scrollable" style="max-width:980px"><div class="modal-content" style="border-radius:18px;border:1.5px solid #e5edf8;box-shadow:0 20px 60px rgba(11,28,72,0.16);overflow:hidden">
     <div class="modal-header d-flex align-items-center" style="background:linear-gradient(135deg,#1F3A8B,#3B5FC7 50%,#0ea5e9);color:#fff;border:none;padding:16px 22px">
         <div class="d-flex align-items-center gap-3" style="flex:1">
             <div style="width:38px;height:38px;border-radius:11px;background:rgba(255,255,255,0.14);display:flex;align-items:center;justify-content:center;border:1px solid rgba(255,255,255,0.18)">
@@ -592,13 +597,13 @@ function renderCustomForm($prefix, $basicFields, $bmnFields, $pajakFields, $serv
             </div>
             <div>
                 <h5 class="modal-title mb-0" style="font-size:14px;font-weight:800;letter-spacing:0.2px">Edit Data Kendaraan</h5>
-                <div style="font-size:9.5px;color:rgba(255,255,255,0.72);margin-top:2px;font-weight:600;letter-spacing:0.15px">Perbarui pajak jatuh tempo, jadwal service & unit kerja</div>
+                <div style="font-size:9.5px;color:rgba(255,255,255,0.72);margin-top:2px;font-weight:600;letter-spacing:0.15px">Perbarui data unit, driver, pajak jatuh tempo &amp; jadwal service kendaraan</div>
             </div>
         </div>
         <button class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
     </div>
     <form method="POST" action="<?= base_url('master/kendaraan.php') ?>"><input type="hidden" name="act" value="edit"><input type="hidden" name="id" id="e_id" value="0">
-        <?php renderCustomForm('e', $basicFields, $bmnFields, $pajakFields, $serviceFields, $statusOps, 'Perbarui Data Kendaraan', $drivers_list); ?>
+        <?php renderCustomForm('e', $basicFields, $pajakFields, $serviceFields, $statusOps, 'Perbarui Data Kendaraan', $drivers_list); ?>
     </form>
 </div></div></div>
 
@@ -636,8 +641,7 @@ document.addEventListener('DOMContentLoaded', function(){
 
 function editK(k) {
     const fields = [
-        'no_plat','merk','tipe','tahun','kapasitas','driver','no_hp_driver','status',
-        'kode_bmn','unit_pengguna',
+        'no_plat','merk','tipe','tahun','driver','no_hp_driver','status',
         'pajak_stnk_jatuh_tempo','pajak_tnkb_jatuh_tempo',
         'terakhir_service','service_berikutnya','catatan_service'
     ];

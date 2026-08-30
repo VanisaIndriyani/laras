@@ -45,16 +45,26 @@ $jam_options[] = '19:00:00';
 $jam_options[] = '20:00:00';
 $jam_options[] = '21:00:00';
 
+// AUTO MIGRATION: tambah kolom catatan_fasilitas jika belum ada
+try {
+    $db_name = DB_NAME;
+    $existing = db()->fetchAll("SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = ? AND TABLE_NAME = 'reservasi_ruangan'", [$db_name]);
+    $existing_cols = array_column($existing, 'COLUMN_NAME');
+    if (!in_array('catatan_fasilitas', $existing_cols, true)) {
+        @db()->exec("ALTER TABLE reservasi_ruangan ADD COLUMN catatan_fasilitas TEXT DEFAULT NULL");
+    }
+} catch (Exception $e) {}
+
 if ($editId > 0 && $data) {
     $_nama_pemohon = sanitize(db()->fetchOne("SELECT nama_lengkap FROM users WHERE id = ?", [$data['user_id']])['nama_lengkap'] ?? '');
     $_nip_pemohon  = sanitize(db()->fetchOne("SELECT nip FROM users WHERE id = ?", [$data['user_id']])['nip'] ?? '');
     $_unit_default = $data['unit_kerja'] ?? '';
-    $_no_hp_default = sanitize(db()->fetchOne("SELECT no_hp FROM users WHERE id = ?", [$data['user_id']])['no_hp'] ?? '');
+    $_catatan_fasilitas_default = sanitize($data['catatan_fasilitas'] ?? '');
 } else {
     $_nama_pemohon = sanitize($user_data['nama_lengkap'] ?? '');
     $_nip_pemohon  = sanitize($user_data['nip'] ?? '');
     $_unit_default = $user_data['unit_kerja'] ?? '';
-    $_no_hp_default = sanitize($user_data['no_hp'] ?? '');
+    $_catatan_fasilitas_default = '';
 }
 ?>
 
@@ -109,14 +119,14 @@ if ($editId > 0 && $data) {
                     <div class="col-md-6">
                         <div class="form-floating">
                             <input type="text" class="form-control" name="nama_lengkap" id="fl_nama" required
-                                   value="<?= $_nama_pemohon ?>" readonly style="background:#f8fafc;border-radius:12px;padding:1.05rem 1rem 0.55rem">
+                                   value="<?= $_nama_pemohon ?>" style="background:#f8fafc;border-radius:12px;padding:1.05rem 1rem 0.55rem">
                             <label for="fl_nama" style="font-size:11.5px;color:#475569;padding-left:1rem">Nama Lengkap Pemohon <span class="text-danger">*</span></label>
                         </div>
                     </div>
                     <div class="col-md-3">
                         <div class="form-floating">
                             <input type="text" class="form-control" name="nip" id="fl_nip" required
-                                   value="<?= $_nip_pemohon ?>" readonly style="background:#f8fafc;border-radius:12px;padding:1.05rem 1rem 0.55rem">
+                                   value="<?= $_nip_pemohon ?>" style="background:#f8fafc;border-radius:12px;padding:1.05rem 1rem 0.55rem">
                             <label for="fl_nip" style="font-size:11.5px;color:#475569;padding-left:1rem">NIP Pemohon <span class="text-danger">*</span></label>
                         </div>
                     </div>
@@ -128,13 +138,6 @@ if ($editId > 0 && $data) {
                                 <?php endforeach; ?>
                             </select>
                             <label for="fl_unit" style="font-size:11.5px;color:#475569;padding-left:1rem">Unit Kerja Penyelenggara <span class="text-danger">*</span></label>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="form-floating">
-                            <input type="text" class="form-control" name="no_hp" id="fl_hp" placeholder="08xxxxxxxxxx"
-                                   value="<?= $_no_hp_default ?>" style="border-radius:12px;padding:1.05rem 1rem 0.55rem">
-                            <label for="fl_hp" style="font-size:11.5px;color:#475569;padding-left:1rem">Nomor HP / WA Kontak <span style="color:#94a3b8">(Opsional)</span></label>
                         </div>
                     </div>
                 </div>
@@ -318,6 +321,13 @@ if ($editId > 0 && $data) {
                             </div>
                         </div>
                     <?php endforeach; ?>
+                </div>
+                <div class="mt-3">
+                    <label for="catatan_fasilitas" class="form-label mb-1.5" style="font-size:11px;font-weight:700;color:#334155">Catatan Lainnya</label>
+                    <textarea class="form-control" name="catatan_fasilitas" id="catatan_fasilitas" rows="3"
+                              placeholder="Contoh: butuh 2 buah mic wireless tambahan, snack pagi untuk 30 orang, setup laptop sebelum acara..."
+                              style="border-radius:12px;padding:12px 14px;font-size:11.5px;line-height:1.6;resize:vertical;border:1.5px solid #e5e7eb"><?= $_catatan_fasilitas_default ?></textarea>
+                    <div class="form-text mt-1" style="font-size:10px;padding-left:2px;color:#64748b">Tuliskan kebutuhan tambahan lain yang belum tercantum di pilihan di atas (perlengkapan, konsumsi, dll).</div>
                 </div>
             </div>
 

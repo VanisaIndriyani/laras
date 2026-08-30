@@ -248,14 +248,14 @@ function generate_kode_reservasi($prefix = 'RES') {
 
 function get_unit_kerja_list() {
     return [
-        'Perwakilan BPKP DIY (Pimpinan)',
-        'Bagian Umum',
-        'Bidang IPP (Instansi Pemerintah Pusat)',
-        'Bidang APD (Akuntabilitas Pemerintah Daerah)',
-        'Bidang AN (Akuntan Negara)',
-        'Bidang Investigasi',
-        'Subbag Kepegawaian & Tata Usaha',
-        'Subbag Keuangan'
+        'IPP',
+        'APD',
+        'AN',
+        'Investigasi',
+        'Keuangan',
+        'P3A',
+        'PBRA',
+        'TU'
     ];
 }
 
@@ -265,12 +265,9 @@ function get_fasilitas_pendukung_list() {
         'Proyektor LCD & Screen',
         'Standing TV 65 Inch (Smart Display)',
         'Kabel Rol Listrik / Ekstensi',
-        'Pointer / Clicker Presentasi',
-        'Papan Tulis / Whiteboard & Spidol',
-        'Podium Sambutan',
-        'Meja Rapat U-Shape',
-        'AC Central',
-        'Bantuan Setting Zoom / Hybrid Meeting'
+        'Bantuan Setting Zoom / Hybrid Meeting',
+        'Laptop',
+        'Camera'
     ];
 }
 

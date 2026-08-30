@@ -76,10 +76,7 @@ $fasilitas_pendukung = json_decode($r['fasilitas_pendukung'] ?? '[]', true);
                             <small class="d-block" style="color:#64748b;margin-bottom:3px">Unit Kerja Penyelenggara</small>
                             <strong style="font-size:12px"><?= $r['unit_kerja'] ?></strong>
                         </div>
-                        <div class="col-md-4">
-                            <small class="d-block" style="color:#64748b;margin-bottom:3px">Nomor HP / WA Kontak</small>
-                            <strong style="font-size:12px"><?= $r['hp_pemohon'] ?: '-' ?></strong>
-                        </div>
+                      
                         <div class="col-md-8">
                             <small class="d-block" style="color:#64748b;margin-bottom:3px">Waktu Pengajuan</small>
                             <strong style="font-size:12px"><?= format_datetime($r['created_at']) ?></strong>

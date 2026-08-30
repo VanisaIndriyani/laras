@@ -363,11 +363,11 @@ function badge_hari($hari) {
         return '<span class="text-muted" style="font-size:10px;font-style:italic;color:#94a3b8">—</span>';
     }
     if ($hari < 0) {
-        return '<span class="badge rounded-pill px-2.5 py-1 d-inline-flex align-items-center fw-bold" style="font-size:9.5px;background:rgba(239,68,68,0.1);color:#dc2626;border:1px solid rgba(239,68,68,0.3)"><i class="bi bi-exclamation-octagon-fill me-1" style="font-size:9px"></i>Lewat '.($hari * -1).' hari</span>';
+        return '<span class="badge rounded-pill d-inline-flex align-items-center fw-bold" style="font-size:9.5px;padding:3.5px 9px;background:rgba(239,68,68,0.1);color:#dc2626;border:1px solid rgba(239,68,68,0.3)"><i class="bi bi-exclamation-octagon-fill me-1" style="font-size:9px"></i>Lewat '.($hari * -1).' hari</span>';
     } elseif ($hari <= 30) {
-        return '<span class="badge rounded-pill px-2.5 py-1 d-inline-flex align-items-center fw-bold" style="font-size:9.5px;background:rgba(245,158,11,0.12);color:#b45309;border:1px solid rgba(245,158,11,0.3)"><i class="bi bi-exclamation-triangle-fill me-1" style="font-size:9px"></i>'.$hari.' hari lagi</span>';
+        return '<span class="badge rounded-pill d-inline-flex align-items-center fw-bold" style="font-size:9.5px;padding:3.5px 9px;background:rgba(245,158,11,0.12);color:#b45309;border:1px solid rgba(245,158,11,0.3)"><i class="bi bi-exclamation-triangle-fill me-1" style="font-size:9px"></i>'.$hari.' hari lagi</span>';
     } else {
-        return '<span class="badge rounded-pill px-2.5 py-1 d-inline-flex align-items-center fw-bold" style="font-size:9.5px;background:rgba(16,185,129,0.08);color:#047857;border:1px solid rgba(16,185,129,0.25)"><i class="bi bi-shield-check me-1" style="font-size:9px"></i>'.$hari.' hari</span>';
+        return '<span class="badge rounded-pill d-inline-flex align-items-center fw-bold" style="font-size:9.5px;padding:3.5px 9px;background:rgba(16,185,129,0.08);color:#047857;border:1px solid rgba(16,185,129,0.25)"><i class="bi bi-shield-check me-1" style="font-size:9px"></i>'.$hari.' hari</span>';
     }
 }
 ?>
@@ -538,7 +538,7 @@ function badge_hari($hari) {
             </div>
             <div class="search-box ms-auto flex-grow-1" style="max-width:420px;min-width:240px">
                 <i class="bi bi-search search-icon"></i>
-                <input type="text" class="search-input" id="cariPajak" placeholder="Cari nopol, merk, kode BMN, unit, driver..." value="<?= sanitize($search) ?>">
+                <input type="text" class="search-input" id="cariPajak" placeholder="Cari nopol, merk, tipe, driver..." value="<?= sanitize($search) ?>">
             </div>
             <div class="d-flex gap-1.5 flex-wrap align-items-center">
                 <a href="?<?= http_build_query(array_merge($_GET, ['filter'=>'all'])) ?>" class="btn rounded-pill fw-extrabold d-inline-flex align-items-center" style="font-size:10px;padding:6px 14px;<?= $filter==='all' ? 'background:linear-gradient(135deg,#0B1C48,#1F3A8B);color:#fff;border:none;box-shadow:0 2px 8px rgba(11,28,72,0.25)' : 'border:1.5px solid #e2e8f0;color:#475569;background:#fff' ?>">
@@ -614,94 +614,87 @@ function badge_hari($hari) {
                 </div>
 
                 <!-- Body card -->
-                <div class="card-body" style="padding:13px 14px 11px 14px">
-                    <div class="d-flex align-items-start justify-content-between mb-2" style="gap:8px">
-                        <div style="min-width:0;flex:1">
-                            <div class="d-flex flex-wrap gap-1 mt-1">
-                                <span class="badge rounded-pill" style="font-size:8.5px;background:rgba(59,95,199,0.08);color:#1e3a8a;padding:2.5px 7px;font-weight:800">
-                                    <i class="bi bi-people-fill me-0.5"></i><?= $k['kapasitas'] ?? 0 ?> Penumpang
-                                </span>
-                                <?php if (!empty($k['driver'])): ?>
-                                <span class="badge rounded-pill" style="font-size:8.5px;background:rgba(16,185,129,0.08);color:#047857;padding:2.5px 7px;font-weight:800">
-                                    <i class="bi bi-person-gear me-0.5"></i><?= sanitize($k['driver']) ?>
-                                </span>
-                                <?php endif; ?>
-                                <?php if (!empty($k['kode_bmn'])): ?>
-                                <span class="badge rounded-pill" style="font-size:8.5px;background:#f1f5f9;color:#334155;padding:2.5px 7px;font-weight:800">
-                                    <i class="bi bi-upc-scan me-0.5"></i><?= sanitize($k['kode_bmn']) ?>
-                                </span>
-                                <?php endif; ?>
-                            </div>
+                <div class="card-body" style="padding:17px 17px 15px 17px">
+                    <!-- Info Driver saja (tanpa Kapasitas Penumpang & Kode BMN sesuai req G) -->
+                    <div class="mb-3">
+                        <?php if (!empty($k['driver'])): ?>
+                        <div class="d-flex flex-wrap gap-2">
+                            <span class="badge rounded-pill d-inline-flex align-items-center" style="font-size:10px;background:rgba(16,185,129,0.09);color:#047857;padding:4.5px 10px;font-weight:800;border:1px solid rgba(16,185,129,0.2)">
+                                <i class="bi bi-person-gear me-1.5"></i>Driver: <?= sanitize($k['driver']) ?>
+                            </span>
+                            <?php if (!empty($k['status']) && $k['status'] !== 'aktif'): ?>
+                            <span class="badge rounded-pill d-inline-flex align-items-center" style="font-size:10px;background:#f1f5f9;color:#334155;padding:4.5px 10px;font-weight:800;border:1px solid #e2e8f0">
+                                <i class="bi bi-geo-alt-fill me-1.5"></i>Status: <?= ucfirst(sanitize($k['status'])) ?>
+                            </span>
+                            <?php endif; ?>
                         </div>
+                        <?php endif; ?>
                     </div>
 
-                    <!-- 3 Ikon Ringkasan Utama (STNK / TNKB / SERVICE) User Request -->
-                    <div class="mt-2 pt-1" style="border-top:1px dashed #e2e8f0">
-                        <div class="mb-2.5"></div>
-
+                    <!-- 3 Ikon Ringkasan Utama (STNK / TNKB / SERVICE) -->
+                    <div class="pt-3" style="border-top:1px dashed #e2e8f0">
                         <!-- 🧾 STNK -->
-                        <div class="d-flex align-items-center gap-2.5 mb-2">
-                            <div style="width:28px;height:28px;border-radius:9px;background:#fff7ed;border:1.2px solid #fed7aa;color:#c2410c;display:flex;align-items:center;justify-content:center;flex-shrink:0">
-                                <i class="bi bi-receipt-cutoff" style="font-size:12px"></i>
+                        <div class="d-flex align-items-start gap-3 mb-4">
+                            <div style="width:34px;height:34px;border-radius:10px;background:#fff7ed;border:1.2px solid #fed7aa;color:#c2410c;display:flex;align-items:center;justify-content:center;flex-shrink:0">
+                                <i class="bi bi-receipt-cutoff" style="font-size:13px"></i>
                             </div>
                             <div style="flex:1;min-width:0">
-                                <div class="d-flex align-items-center gap-2 flex-wrap mb-0.5">
-                                    <span style="font-size:8.5px;font-weight:800;color:#9a3412;letter-spacing:0.4px;text-transform:uppercase">STNK 1 Tahunan</span>
+                                <div class="d-flex align-items-center gap-2 flex-wrap mb-1">
+                                    <span style="font-size:9.5px;font-weight:800;color:#9a3412;letter-spacing:0.4px;text-transform:uppercase">STNK 1 Tahunan</span>
                                     <?= badge_hari($k['_stnk_hari']) ?>
                                 </div>
-                                <div class="fw-semibold" style="font-size:10.5px;color:#0f172a;line-height:1.3">
+                                <div class="fw-semibold" style="font-size:11.5px;color:#0f172a;line-height:1.4">
                                     Jatuh tempo: <b><?= !empty($k['pajak_stnk_jatuh_tempo'])?format_date($k['pajak_stnk_jatuh_tempo'],false):'<em style="color:#94a3b8">Belum diatur</em>' ?></b>
                                 </div>
                             </div>
                         </div>
 
                         <!-- 📋 TNKB -->
-                        <div class="d-flex align-items-center gap-2.5 mb-2">
-                            <div style="width:28px;height:28px;border-radius:9px;background:#eff6ff;border:1.2px solid #bfdbfe;color:#1d4ed8;display:flex;align-items:center;justify-content:center;flex-shrink:0">
-                                <i class="bi bi-card-checklist" style="font-size:12px"></i>
+                        <div class="d-flex align-items-start gap-3 mb-4">
+                            <div style="width:34px;height:34px;border-radius:10px;background:#eff6ff;border:1.2px solid #bfdbfe;color:#1d4ed8;display:flex;align-items:center;justify-content:center;flex-shrink:0">
+                                <i class="bi bi-card-checklist" style="font-size:13px"></i>
                             </div>
                             <div style="flex:1;min-width:0">
-                                <div class="d-flex align-items-center gap-2 flex-wrap mb-0.5">
-                                    <span style="font-size:8.5px;font-weight:800;color:#1e40af;letter-spacing:0.4px;text-transform:uppercase">TNKB 5 Tahunan</span>
+                                <div class="d-flex align-items-center gap-2 flex-wrap mb-1">
+                                    <span style="font-size:9.5px;font-weight:800;color:#1e40af;letter-spacing:0.4px;text-transform:uppercase">TNKB 5 Tahunan</span>
                                     <?= badge_hari($k['_tnkb_hari']) ?>
                                 </div>
-                                <div class="fw-semibold" style="font-size:10.5px;color:#0f172a;line-height:1.3">
+                                <div class="fw-semibold" style="font-size:11.5px;color:#0f172a;line-height:1.4">
                                     Ganti plat: <b><?= !empty($k['pajak_tnkb_jatuh_tempo'])?format_date($k['pajak_tnkb_jatuh_tempo'],false):'<em style="color:#94a3b8">Belum diatur</em>' ?></b>
                                 </div>
                             </div>
                         </div>
 
                         <!-- 🔧 SERVICE Terakhir & berikutnya -->
-                        <div class="d-flex align-items-center gap-2.5">
-                            <div style="width:28px;height:28px;border-radius:9px;background:#faf5ff;border:1.2px solid #ddd6fe;color:#6d28d9;display:flex;align-items:center;justify-content:center;flex-shrink:0">
-                                <i class="bi bi-wrench-adjustable-circle" style="font-size:12px"></i>
+                        <div class="d-flex align-items-start gap-3">
+                            <div style="width:34px;height:34px;border-radius:10px;background:#faf5ff;border:1.2px solid #ddd6fe;color:#6d28d9;display:flex;align-items:center;justify-content:center;flex-shrink:0">
+                                <i class="bi bi-wrench-adjustable-circle" style="font-size:13px"></i>
                             </div>
                             <div style="flex:1;min-width:0">
-                                <div class="d-flex align-items-center gap-2 flex-wrap mb-0.5">
-                                    <span style="font-size:8.5px;font-weight:800;color:#5b21b6;letter-spacing:0.4px;text-transform:uppercase">Service Rutin</span>
+                                <div class="d-flex align-items-center gap-2 flex-wrap mb-1">
+                                    <span style="font-size:9.5px;font-weight:800;color:#5b21b6;letter-spacing:0.4px;text-transform:uppercase">Service Rutin</span>
                                     <?= badge_hari($k['_svc_hari']) ?>
                                 </div>
-                                <div style="font-size:10.5px;color:#334155;line-height:1.5">
-                                    <span class="text-muted fw-semibold" style="font-size:9px;letter-spacing:0.2px">Terakhir:</span>
+                                <div style="font-size:11px;color:#334155;line-height:1.7">
+                                    <span class="text-muted fw-semibold" style="font-size:9.5px;letter-spacing:0.2px">Terakhir:</span>
                                     <b class="me-2"><?= !empty($k['terakhir_service'])?format_date($k['terakhir_service'],false):'<em style="color:#94a3b8">—</em>' ?></b>
-                                    <span class="text-muted fw-semibold" style="font-size:9px;letter-spacing:0.2px">→ Kembali:</span>
+                                    <span class="text-muted fw-semibold" style="font-size:9.5px;letter-spacing:0.2px">→ Kembali:</span>
                                     <b style="color:#5b21b6"><?= !empty($k['service_berikutnya'])?format_date($k['service_berikutnya'],false):'<em style="color:#94a3b8">—</em>' ?></b>
+                                    <?php if (!empty($k['catatan_service'])): ?>
+                                    <div class="mt-1.5" style="font-size:10px;color:#64748b;background:#f8fafc;border:1px dashed #e2e8f0;border-radius:9px;padding:6px 9px;line-height:1.55">
+                                        <i class="bi bi-sticky me-1" style="color:#6366f1"></i><?= sanitize($k['catatan_service']) ?>
+                                    </div>
+                                    <?php endif; ?>
                                 </div>
                             </div>
                         </div>
                     </div>
 
                     <!-- Tombol aksi bawah -->
-                    <div class="mt-3 pt-2 d-flex gap-1.5 align-items-center justify-content-between" style="border-top:1px solid #f1f5f9">
-                        <div style="min-width:0;flex:1">
-                            <div style="font-size:8.5px;color:#64748b;letter-spacing:0.25px;text-transform:uppercase;font-weight:800">Unit Pengguna</div>
-                            <div style="font-size:10.5px;color:#0f172a;line-height:1.4;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:700"><?= !empty($k['unit_pengguna'])?sanitize($k['unit_pengguna']):'<em style="color:#94a3b8;font-style:italic">Belum ditetapkan</em>' ?></div>
-                        </div>
-                        <div class="d-flex gap-1.5 flex-shrink-0">
-                            <a href="<?= base_url('master/kendaraan.php') ?>?edit=<?= $k['id'] ?>" target="_blank" class="btn btn-sm fw-extrabold" style="border-radius:10px;padding:6px 11px;font-size:9.5px;background:linear-gradient(135deg,#3B5FC7,#1F3A8B);color:#fff;border:0;box-shadow:0 2px 6px rgba(59,95,199,0.22)">
-                                <i class="bi bi-pencil-square me-1"></i>Edit
-                            </a>
-                        </div>
+                    <div class="mt-4 pt-3 d-flex align-items-center justify-content-end" style="border-top:1px solid #f1f5f9">
+                        <a href="<?= base_url('master/kendaraan.php') ?>?edit=<?= $k['id'] ?>" target="_blank" class="btn fw-extrabold d-inline-flex align-items-center" style="border-radius:11px;padding:8px 16px;font-size:10.5px;background:linear-gradient(135deg,#3B5FC7,#1F3A8B);color:#fff;border:0;box-shadow:0 3px 9px rgba(59,95,199,0.25)">
+                            <i class="bi bi-pencil-square me-1.5"></i>Kelola Data Kendaraan
+                        </a>
                     </div>
                 </div>
             </div>
@@ -716,13 +709,11 @@ function badge_hari($hari) {
     <div class="card border-0 mb-4" style="border-radius:16px;border:1.5px solid #e5edf8;overflow:hidden;box-shadow:0 1px 3px rgba(15,23,42,0.04)">
 
         <div style="overflow-x:auto;background:#fff">
-            <table class="table mb-0 align-middle" style="min-width:<?= $isAdmin ? '1790px' : '1510px' ?>">
+            <table class="table mb-0 align-middle" style="min-width:<?= $isAdmin ? '1480px' : '1200px' ?>">
                 <thead style="background:linear-gradient(180deg,#f8fafc,#f1f5f9);position:sticky;top:0;z-index:2">
                     <tr>
                         <th style="padding:13px 18px;font-size:10px;letter-spacing:0.4px;color:#475569;font-weight:800;border-bottom:1.5px solid #e2e8f0;min-width:120px">No. Plat</th>
-                        <th style="padding:13px 18px;font-size:10px;letter-spacing:0.4px;color:#475569;font-weight:800;border-bottom:1.5px solid #e2e8f0;min-width:220px">Kendaraan</th>
-                        <th style="padding:13px 18px;font-size:10px;letter-spacing:0.4px;color:#475569;font-weight:800;border-bottom:1.5px solid #e2e8f0;min-width:140px">Kode BMN</th>
-                        <th style="padding:13px 18px;font-size:10px;letter-spacing:0.4px;color:#475569;font-weight:800;border-bottom:1.5px solid #e2e8f0;min-width:200px">Unit Pengguna</th>
+                        <th style="padding:13px 18px;font-size:10px;letter-spacing:0.4px;color:#475569;font-weight:800;border-bottom:1.5px solid #e2e8f0;min-width:220px">Kendaraan &amp; Driver</th>
                         <th style="padding:13px 18px;font-size:10px;letter-spacing:0.4px;color:#92400e;font-weight:800;border-bottom:1.5px solid #e2e8f0" colspan="2">
                             <i class="bi bi-stopwatch me-1" style="font-size:11px"></i>STNK 1 Tahunan · Pengingat Bayar
                         </th>
@@ -740,7 +731,7 @@ function badge_hari($hari) {
                     </tr>
                     <?php if ($isAdmin): ?>
                     <tr style="background:linear-gradient(180deg,#f1f5f9,#f8fafc);border-bottom:1px solid #e2e8f0">
-                        <th style="padding:6px 18px" colspan="5"></th>
+                        <th style="padding:6px 18px" colspan="3"></th>
                         <th style="padding:6px 12px;font-size:8.5px;letter-spacing:0.35px;color:#64748b;font-weight:800;border-right:3px solid #fde68a;border-bottom:none;width:155px">Tgl. Jatuh Tempo</th>
                         <th style="padding:6px 12px;font-size:8.5px;letter-spacing:0.35px;color:#64748b;font-weight:800;border-bottom:none;width:145px">⏰ Hitung Mundur</th>
                         <th style="padding:6px 12px;font-size:8.5px;letter-spacing:0.35px;color:#64748b;font-weight:800;border-right:3px solid #fde68a;border-bottom:none;width:155px">Tgl. Jatuh Tempo</th>
@@ -753,7 +744,7 @@ function badge_hari($hari) {
                     </tr>
                     <?php else: ?>
                     <tr style="background:linear-gradient(180deg,#f1f5f9,#f8fafc);border-bottom:1px solid #e2e8f0">
-                        <th style="padding:6px 18px" colspan="5"></th>
+                        <th style="padding:6px 18px" colspan="3"></th>
                         <th style="padding:6px 12px;font-size:8.5px;letter-spacing:0.35px;color:#64748b;font-weight:800;border-right:3px solid #fde68a;border-bottom:none;width:155px">Tgl. Jatuh Tempo</th>
                         <th style="padding:6px 12px;font-size:8.5px;letter-spacing:0.35px;color:#64748b;font-weight:800;border-bottom:none;width:145px">⏰ Hitung Mundur</th>
                         <th style="padding:6px 12px;font-size:8.5px;letter-spacing:0.35px;color:#64748b;font-weight:800;border-right:3px solid #fde68a;border-bottom:none;width:155px">Tgl. Jatuh Tempo</th>
@@ -766,7 +757,7 @@ function badge_hari($hari) {
                 <tbody style="background:#fff">
                     <?php if (count($items) === 0): ?>
                         <tr>
-                            <td colspan="<?= $isAdmin ? 14 : 10 ?>" style="padding:60px 20px;text-align:center">
+                            <td colspan="<?= $isAdmin ? 12 : 8 ?>" style="padding:60px 20px;text-align:center">
                                 <div class="mb-2"><i class="bi bi-calendar-x" style="font-size:42px;color:#cbd5e1"></i></div>
                                 <div class="fw-bold mb-1" style="color:#475569;font-size:12.5px">Belum Ada Data Pengingat Pajak</div>
                                 <p class="mb-0 text-muted" style="font-size:10.5px">Tambahkan data master kendaraan beserta kolom tanggal pajak di menu <strong>Master Kendaraan</strong>.</p>
@@ -789,36 +780,15 @@ function badge_hari($hari) {
                         <td style="padding:14px 18px">
                             <div class="fw-bold mb-0.5" style="font-size:12px;color:#0f172a;line-height:1.35"><?= sanitize($k['merk'] ?? '') ?> <?= sanitize($k['tipe'] ?? '') ?></div>
                             <div class="d-flex gap-1.5 flex-wrap mt-1.5">
-                                <span class="badge rounded-pill" style="font-size:9px;background:#f1f5f9;color:#475569;padding:2.5px 7px;font-weight:700">
-                                    <i class="bi bi-calendar3 me-0.5" style="font-size:8px"></i>Th. <?= !empty($k['tahun']) ? $k['tahun'] : '-' ?>
-                                </span>
-                                <span class="badge rounded-pill" style="font-size:9px;background:#f1f5f9;color:#475569;padding:2.5px 7px;font-weight:700">
-                                    <i class="bi bi-people-fill me-0.5" style="font-size:8px"></i><?= !empty($k['kapasitas']) ? $k['kapasitas'] : 0 ?> kursi
+                                <span class="badge rounded-pill" style="font-size:9px;background:#f1f5f9;color:#475569;padding:3px 8px;font-weight:700">
+                                    <i class="bi bi-calendar3 me-0.5" style="font-size:8px"></i>Tahun <?= !empty($k['tahun']) ? $k['tahun'] : '-' ?>
                                 </span>
                                 <?php if (!empty($k['driver'])): ?>
-                                    <span class="badge rounded-pill" style="font-size:9px;background:rgba(37,99,235,0.1);color:#1d4ed8;padding:2.5px 7px;font-weight:700">
+                                    <span class="badge rounded-pill" style="font-size:9px;background:rgba(37,99,235,0.1);color:#1d4ed8;padding:3px 8px;font-weight:700">
                                         <i class="bi bi-person-gear me-0.5" style="font-size:8px"></i><?= sanitize($k['driver']) ?>
                                     </span>
                                 <?php endif; ?>
                             </div>
-                        </td>
-                        <td style="padding:14px 18px">
-                            <?php if (!empty($k['kode_bmn'])): ?>
-                                <div class="fw-extrabold text-uppercase" style="font-size:11px;color:#1F3A8B;letter-spacing:0.35px"><?= sanitize($k['kode_bmn']) ?></div>
-                            <?php else: ?>
-                                <span class="pill-badge-mini" style="background:#fef3c7;color:#92400e;border:1px solid #fde68a;padding:2.5px 7px;border-radius:999px;font-size:8.5px;font-weight:800">
-                                    <i class="bi bi-dash-circle-dotted me-1" style="font-size:8px"></i>Belum diisi
-                                </span>
-                            <?php endif; ?>
-                        </td>
-                        <td style="padding:14px 18px">
-                            <?php if (!empty($k['unit_pengguna'])): ?>
-                                <div class="fw-semibold" style="font-size:11px;color:#475569;line-height:1.45"><?= sanitize($k['unit_pengguna']) ?></div>
-                            <?php else: ?>
-                                <span class="pill-badge-mini" style="background:rgba(239,68,68,0.08);color:#dc2626;border:1px solid rgba(239,68,68,0.2);padding:2.5px 7px;border-radius:999px;font-size:8.5px;font-weight:800">
-                                    <i class="bi bi-person-x-fill me-1" style="font-size:8px"></i>Belum ditetapkan
-                                </span>
-                            <?php endif; ?>
                         </td>
                         <!-- STNK -->
                         <td style="padding:14px 12px;border-right:3px dashed #fde68a">

@@ -169,17 +169,13 @@ try {
                         <label class="form-label">NIP Pemohon *</label>
                         <input type="text" class="form-control" name="nip" required value="<?= sanitize($data ? db()->fetchOne("SELECT nip FROM users WHERE id = ?", [$data['user_id']])['nip'] : $user_data['nip']) ?>" readonly>
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-md-5">
                         <label class="form-label">Unit Kerja *</label>
                         <select class="form-select" name="unit_kerja" required>
                             <?php foreach (get_unit_kerja_list() as $u): ?>
                                 <option value="<?= $u ?>" <?= ($u === ($data ? db()->fetchOne("SELECT unit_kerja FROM users WHERE id = ?", [$data['user_id']])['unit_kerja'] : $user_data['unit_kerja'])) ? 'selected' : '' ?>><?= $u ?></option>
                             <?php endforeach; ?>
                         </select>
-                    </div>
-                    <div class="col-md-2">
-                        <label class="form-label">Nomor HP / WA <span style="color:#94a3b8">(Opsional)</span></label>
-                        <input type="text" class="form-control" name="no_hp" value="<?= sanitize($data ? db()->fetchOne("SELECT no_hp FROM users WHERE id = ?", [$data['user_id']])['no_hp'] : $user_data['no_hp']) ?>" placeholder="08xxxxxxxxxx">
                     </div>
                 </div>
             </div>
@@ -188,7 +184,7 @@ try {
                 <div class="form-section-title">
                     <div class="section-number">2</div>
                     <div class="section-text">
-                        <strong>Detail Kendaraan, Supir & Tujuan Perjalanan Dinas</strong>
+                        <strong>Detail Kendaraan, Driver & Tujuan Perjalanan Dinas</strong>
                         <small>Pilih armada kendaraan, driver (opsional fasilitas tambahan), dan isi detail keperluan perjalanan</small>
                     </div>
                 </div>
@@ -211,21 +207,21 @@ try {
                             <?php endforeach; ?>
                         </select>
                         <input type="hidden" name="driver_id" id="driver_id" value="<?= (int)($data['driver_id'] ?? 0) ?>">
-                        <div class="form-text">Kendaraan yang tampil hanya yang berstatus Tersedia. Admin dapat menghubungi Bagian Umum untuk info ketersediaan unit lain. Driver default otomatis ter-assign sesuai unit yang dipilih (centang opsi "Dengan Driver/Supir" di bawah).</div>
+                        <div class="form-text">Kendaraan yang tampil hanya yang berstatus Tersedia. Admin dapat menghubungi Bagian Umum untuk info ketersediaan unit lain. Driver default otomatis ter-assign sesuai unit yang dipilih (centang opsi "Dengan Driver" di bawah).</div>
                     </div>
                     <div class="col-md-6">
                         <label class="form-label">Tujuan Lokasi *</label>
                         <input type="text" class="form-control" name="tujuan" placeholder="Contoh: Kantor Gubernur DIY, Sleman" required value="<?= sanitize($data['tujuan'] ?? '') ?>">
                     </div>
                     <div class="col-md-6">
-                        <label class="form-label">Fasilitas Tambahan <small class="text-muted">— Penugasan Supir</small></label>
+                        <label class="form-label">Fasilitas Tambahan <small class="text-muted">— Penugasan Driver</small></label>
                         <div class="border rounded-3 p-3" style="background:linear-gradient(180deg,#fafcff,#ffffff);border:1.5px solid #e5edf8">
                             <?php
                                 $selFas = [];
                                 if (!empty($data['fasilitas_tambahan'])) $selFas = json_decode($data['fasilitas_tambahan'], true) ?: [];
                                 if (!is_array($selFas)) $selFas = $selFas ? [$selFas] : [];
                                 $faOptions = [
-                                    'driver' => ['label' => 'Dengan Driver / Supir', 'icon' => 'bi-person-gear', 'desc' => 'Menugaskan supir default dari Master Data sesuai unit kendaraan yang dipilih'],
+                                    'driver' => ['label' => 'Dengan Driver', 'icon' => 'bi-person-gear', 'desc' => 'Menugaskan driver default dari Master Data sesuai unit kendaraan yang dipilih'],
                                 ];
                                 echo '<div class="row g-2">';
                                 foreach ($faOptions as $kode => $fa) {

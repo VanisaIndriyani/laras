@@ -21,6 +21,7 @@ try {
             $tgl_selesai = sanitize($_POST['tanggal_selesai'] ?? '');
             $jam_selesai = sanitize($_POST['jam_selesai'] ?? '');
             $fasilitas = $_POST['fasilitas'] ?? [];
+            $catatan_fasilitas = sanitize($_POST['catatan_fasilitas'] ?? null);
 
             if (!$ruangan_id || !$nama_acara || !$deskripsi || !$tgl_mulai || !$tgl_selesai || !$unit_kerja) {
                 throw new Exception('Mohon lengkapi semua kolom wajib.');
@@ -30,6 +31,27 @@ try {
             if (!$ruangan) throw new Exception('Ruangan tidak tersedia.');
 
             if ($tgl_selesai < $tgl_mulai) throw new Exception('Tanggal selesai tidak valid.');
+
+            $conflict = db()->fetchOne(
+                "SELECT COUNT(*) AS c FROM reservasi_ruangan
+                 WHERE ruangan_id = ? AND status IN ('pending','disetujui')
+                   AND NOT (
+                        (tanggal_selesai < ?) OR
+                        (tanggal_mulai > ?) OR
+                        (tanggal_selesai = ? AND jam_selesai <= ?) OR
+                        (tanggal_mulai = ? AND jam_mulai >= ?)
+                   )",
+                [
+                    $ruangan_id,
+                    $tgl_mulai,
+                    $tgl_selesai,
+                    $tgl_mulai, $jam_mulai,
+                    $tgl_selesai, $jam_selesai
+                ]
+            );
+            if ((int)($conflict['c'] ?? 0) > 0) {
+                throw new Exception('Maaf, ruangan ini SUDAH DIBOOKING pada jadwal yang sama (bertabrakan dengan pengajuan Pending / Disetujui lain). Silakan pilih ruangan / jam / tanggal lain.');
+            }
 
             $kode = generate_kode_reservasi('RUANG');
             $now = date('Y-m-d H:i:s');
@@ -47,6 +69,7 @@ try {
                 'tanggal_selesai' => $tgl_selesai,
                 'jam_selesai' => $jam_selesai,
                 'fasilitas_pendukung' => json_encode($fasilitas),
+                'catatan_fasilitas' => $catatan_fasilitas,
                 'status' => 'pending',
                 'created_at' => $now
             ]);
@@ -71,6 +94,28 @@ try {
             $tgl_selesai = sanitize($_POST['tanggal_selesai'] ?? '');
             $jam_selesai = sanitize($_POST['jam_selesai'] ?? '');
             $fasilitas = $_POST['fasilitas'] ?? [];
+            $catatan_fasilitas = sanitize($_POST['catatan_fasilitas'] ?? null);
+
+            $conflict = db()->fetchOne(
+                "SELECT COUNT(*) AS c FROM reservasi_ruangan
+                 WHERE ruangan_id = ? AND id != ? AND status IN ('pending','disetujui')
+                   AND NOT (
+                        (tanggal_selesai < ?) OR
+                        (tanggal_mulai > ?) OR
+                        (tanggal_selesai = ? AND jam_selesai <= ?) OR
+                        (tanggal_mulai = ? AND jam_mulai >= ?)
+                   )",
+                [
+                    $ruangan_id, $editId,
+                    $tgl_mulai,
+                    $tgl_selesai,
+                    $tgl_mulai, $jam_mulai,
+                    $tgl_selesai, $jam_selesai
+                ]
+            );
+            if ((int)($conflict['c'] ?? 0) > 0) {
+                throw new Exception('Maaf, ruangan ini SUDAH DIBOOKING pada jadwal yang sama (bertabrakan dengan pengajuan Pending / Disetujui lain). Silakan pilih ruangan / jam / tanggal lain.');
+            }
 
             db()->update('reservasi_ruangan', [
                 'ruangan_id' => $ruangan_id,
@@ -83,6 +128,7 @@ try {
                 'tanggal_selesai' => $tgl_selesai,
                 'jam_selesai' => $jam_selesai,
                 'fasilitas_pendukung' => json_encode($fasilitas),
+                'catatan_fasilitas' => $catatan_fasilitas,
                 'status' => 'pending'
             ], 'id = ?', [$editId]);
 
@@ -102,8 +148,30 @@ try {
         case 'setujui':
             require_admin();
             $id = (int)($_GET['id'] ?? 0);
-            $data = db()->fetchOne("SELECT kode_reservasi FROM reservasi_ruangan WHERE id = ? AND status = 'pending'", [$id]);
+            $data = db()->fetchOne("SELECT * FROM reservasi_ruangan WHERE id = ? AND status = 'pending'", [$id]);
             if (!$data) throw new Exception('Reservasi tidak dapat disetujui.');
+
+            $conflict = db()->fetchOne(
+                "SELECT COUNT(*) AS c FROM reservasi_ruangan
+                 WHERE ruangan_id = ? AND id != ? AND status IN ('pending','disetujui')
+                   AND NOT (
+                        (tanggal_selesai < ?) OR
+                        (tanggal_mulai > ?) OR
+                        (tanggal_selesai = ? AND jam_selesai <= ?) OR
+                        (tanggal_mulai = ? AND jam_mulai >= ?)
+                   )",
+                [
+                    (int)$data['ruangan_id'], $id,
+                    $data['tanggal_mulai'],
+                    $data['tanggal_selesai'],
+                    $data['tanggal_mulai'], $data['jam_mulai'],
+                    $data['tanggal_selesai'], $data['jam_selesai']
+                ]
+            );
+            if ((int)($conflict['c'] ?? 0) > 0) {
+                throw new Exception('Tidak dapat disetujui: Ruangan ini sudah ada jadwal pemakaian lain yang bertabrakan pada jam & tanggal yang sama.');
+            }
+
             db()->update('reservasi_ruangan', [
                 'status' => 'disetujui',
                 'approved_by' => $user['id'],
@@ -131,6 +199,32 @@ try {
             $keputusan = sanitize($_POST['keputusan'] ?? '');
             $catatan = sanitize($_POST['catatan'] ?? '');
             if (!in_array($keputusan, ['disetujui', 'ditolak'])) throw new Exception('Keputusan tidak valid.');
+
+            $current = db()->fetchOne("SELECT * FROM reservasi_ruangan WHERE id = ?", [$id]);
+            if (!$current) throw new Exception('Data reservasi tidak ditemukan.');
+
+            if ($keputusan === 'disetujui') {
+                $conflict = db()->fetchOne(
+                    "SELECT COUNT(*) AS c FROM reservasi_ruangan
+                     WHERE ruangan_id = ? AND id != ? AND status IN ('pending','disetujui')
+                       AND NOT (
+                            (tanggal_selesai < ?) OR
+                            (tanggal_mulai > ?) OR
+                            (tanggal_selesai = ? AND jam_selesai <= ?) OR
+                            (tanggal_mulai = ? AND jam_mulai >= ?)
+                       )",
+                    [
+                        (int)$current['ruangan_id'], $id,
+                        $current['tanggal_mulai'],
+                        $current['tanggal_selesai'],
+                        $current['tanggal_mulai'], $current['jam_mulai'],
+                        $current['tanggal_selesai'], $current['jam_selesai']
+                    ]
+                );
+                if ((int)($conflict['c'] ?? 0) > 0) {
+                    throw new Exception('Tidak dapat disetujui: Ruangan ini sudah ada jadwal pemakaian lain yang bertabrakan pada jam & tanggal yang sama.');
+                }
+            }
 
             db()->update('reservasi_ruangan', [
                 'status' => $keputusan,

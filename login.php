@@ -7,14 +7,14 @@ if (is_logged_in()) {
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $nip = sanitize($_POST['nip_pegawai'] ?? '');
+    $nip = preg_replace('/\s+/', '', sanitize($_POST['nip_pegawai'] ?? ''));
 
     if (empty($nip)) {
         set_flash('error', 'NIP wajib diisi.');
         redirect(base_url('login.php'));
     }
 
-    $user = db()->fetchOne("SELECT * FROM users WHERE nip = ?", [$nip]);
+    $user = db()->fetchOne("SELECT * FROM users WHERE REPLACE(REPLACE(nip, ' ', ''), '.', '') = ?", [$nip]);
 
     if (!$user) {
         set_flash('error', 'NIP tidak ditemukan. Silakan hubungi Admin.');
@@ -413,7 +413,7 @@ $favicon = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' view
 
         <!-- Brand -->
         <div class="login-brand" style="flex-direction:column; gap:10px; text-align:center;">
-            <img src="<?= base_url('assets/logo.PNG') ?>" alt="Logo LARAS BPKP DIY" style="max-height:78px; width:auto; display:block; margin:0 auto;">
+            <img src="<?= base_url('assets/logo.PNG') ?>" alt="Logo LARAS BPKP DIY" style="max-height:120px; width:auto; display:block; margin:0 auto;">
             <div class="brand-title">
                 <div class="sub" style="font-weight:600; letter-spacing:0.2px;">BPKP PERWAKILAN D.I. YOGYAKARTA</div>
                 <div class="sub" style="font-size:10.5px; opacity:0.8; margin-top:2px;">Layanan Administrasi Reservasi Aset dan Sarana</div>
@@ -481,8 +481,14 @@ $favicon = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' view
         const r = localStorage.getItem('laras:nip_peg');
         const inp = document.getElementById('inp_nip');
         const chk = document.getElementById('remember');
-        if (r && inp) { inp.value = r; if (chk) chk.checked = true; }
+        if (r && inp) { inp.value = r.replace(/\s+/g, ''); if (chk) chk.checked = true; }
+        if (inp) {
+            inp.addEventListener('input', function() {
+                this.value = this.value.replace(/\s+/g, '');
+            });
+        }
         document.querySelector('form').addEventListener('submit', () => {
+            if (inp) inp.value = inp.value.replace(/\s+/g, '');
             if (chk && chk.checked && inp.value) localStorage.setItem('laras:nip_peg', inp.value);
             else localStorage.removeItem('laras:nip_peg');
         });
